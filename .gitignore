@@ -2,9 +2,12 @@ node_modules/
 build/
 dist/
 coverage/
-.DS_Store
+
 *.log
 .env*
 
-
+# IDEs
 .idea/
+
+# OS
+.DS_Store
