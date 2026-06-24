@@ -101,7 +101,7 @@ export default function CsvImport() {
           requestedBedType: idxReqBed !== -1 ? row[idxReqBed] || 'Any' : 'Any',
           sharingPreferences: idxSharing !== -1 ? row[idxSharing] || '' : '',
           assignedRoomId: null,
-          assignedBedId: null,
+          assignedBedId: null
         })
       }
 

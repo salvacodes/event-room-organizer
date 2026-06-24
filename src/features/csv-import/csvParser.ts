@@ -76,7 +76,7 @@ export function parseBedConfiguration(configStr: string, roomId: string): Bed[] 
           id: `${roomId}-bed-${bedIndex++}`,
           type: 'double bed (single occupancy)',
           label: 'Double Bed (Single Occupancy)',
-          assignedParticipantId: null,
+          assignedParticipantId: null
         })
       }
     } else if (
@@ -92,13 +92,13 @@ export function parseBedConfiguration(configStr: string, roomId: string): Bed[] 
           id: `${roomId}-bed-${uniqueBedId}-spot1`,
           type: 'double bed (shared)',
           label: 'Double Bed (Shared) - Slot A',
-          assignedParticipantId: null,
+          assignedParticipantId: null
         })
         beds.push({
           id: `${roomId}-bed-${uniqueBedId}-spot2`,
           type: 'double bed (shared)',
           label: 'Double Bed (Shared) - Slot B',
-          assignedParticipantId: null,
+          assignedParticipantId: null
         })
       }
     } else {
@@ -107,7 +107,7 @@ export function parseBedConfiguration(configStr: string, roomId: string): Bed[] 
           id: `${roomId}-bed-${bedIndex++}`,
           type: 'single bed',
           label: 'Single Bed',
-          assignedParticipantId: null,
+          assignedParticipantId: null
         })
       }
     }
