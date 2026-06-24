@@ -1,19 +1,15 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import React, { useState, useMemo } from "react";
-import { Participant, Room } from "../types";
-import { Search, UserPlus, Users, Eye, EyeOff, Check, AlertCircle } from "lucide-react";
+import { AlertCircle, Check, Eye, EyeOff, Search, UserPlus, Users } from 'lucide-react'
+import type React from 'react'
+import { useMemo, useState } from 'react'
+import type { Participant, Room } from '../types'
 
 interface ParticipantPoolProps {
-  participants: Participant[];
-  rooms: Room[];
-  onManualAssign: (participantId: string, roomId: string, bedId: string) => void;
-  onRemoveAssignment: (participantId: string) => void;
-  onDragStartGuest?: (p: Participant) => void;
-  onDragEndGuest?: () => void;
+  participants: Participant[]
+  rooms: Room[]
+  onManualAssign: (participantId: string, roomId: string, bedId: string) => void
+  onRemoveAssignment: (participantId: string) => void
+  onDragStartGuest?: (p: Participant) => void
+  onDragEndGuest?: () => void
 }
 
 export default function ParticipantPool({
@@ -22,91 +18,95 @@ export default function ParticipantPool({
   onManualAssign,
   onRemoveAssignment,
   onDragStartGuest,
-  onDragEndGuest,
+  onDragEndGuest
 }: ParticipantPoolProps) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"unassigned" | "assigned" | "all">("unassigned");
-  const [roomPrefFilter, setRoomPrefFilter] = useState("all");
-  const [selectedForQuickAssign, setSelectedForQuickAssign] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('')
+  const [statusFilter, setStatusFilter] = useState<'unassigned' | 'assigned' | 'all'>('unassigned')
+  const [roomPrefFilter, setRoomPrefFilter] = useState('all')
+  const [selectedForQuickAssign, setSelectedForQuickAssign] = useState<string | null>(null)
 
   // Derive unique preferred room types for filter
   const roomPrefOptions = useMemo(() => {
-    const prefs = new Set<string>();
-    participants.forEach(p => {
-      if (p.requestedRoomType) prefs.add(p.requestedRoomType);
-    });
-    return Array.from(prefs).sort();
-  }, [participants]);
+    const prefs = new Set<string>()
+    participants.forEach((p) => {
+      if (p.requestedRoomType) prefs.add(p.requestedRoomType)
+    })
+    return Array.from(prefs).sort()
+  }, [participants])
 
   // Find all beds that are currently vacant
   const vacantBeds = useMemo(() => {
-    const list: Array<{ roomName: string; roomId: string; bedId: string; bedType: string }> = [];
-    rooms.forEach(room => {
-      room.beds.forEach(bed => {
+    const list: Array<{ roomName: string; roomId: string; bedId: string; bedType: string }> = []
+    rooms.forEach((room) => {
+      room.beds.forEach((bed) => {
         if (!bed.assignedParticipantId) {
           list.push({
             roomName: room.id,
             roomId: room.id,
             bedId: bed.id,
             bedType: bed.type
-          });
+          })
         }
-      });
-    });
-    return list;
-  }, [rooms]);
+      })
+    })
+    return list
+  }, [rooms])
 
   // Filter participants
   const filteredParticipants = useMemo(() => {
-    return participants.filter(p => {
+    return participants.filter((p) => {
       // 1. Search text mapping
-      const term = searchTerm.toLowerCase();
-      const matchesSearch = p.name.toLowerCase().includes(term) || 
+      const term = searchTerm.toLowerCase()
+      const matchesSearch =
+        p.name.toLowerCase().includes(term) ||
         p.sharingPreferences.toLowerCase().includes(term) ||
-        (p.requestedRoomType && p.requestedRoomType.toLowerCase().includes(term));
+        (p.requestedRoomType && p.requestedRoomType.toLowerCase().includes(term))
 
       // 2. Status check
-      const matchesStatus = statusFilter === "all" ||
-        (statusFilter === "unassigned" && !p.assignedRoomId) ||
-        (statusFilter === "assigned" && p.assignedRoomId);
+      const matchesStatus =
+        statusFilter === 'all' ||
+        (statusFilter === 'unassigned' && !p.assignedRoomId) ||
+        (statusFilter === 'assigned' && p.assignedRoomId)
 
       // 3. Room preference
-      const matchesRoomPref = roomPrefFilter === "all" || p.requestedRoomType === roomPrefFilter;
+      const matchesRoomPref = roomPrefFilter === 'all' || p.requestedRoomType === roomPrefFilter
 
-      return matchesSearch && matchesStatus && matchesRoomPref;
-    });
-  }, [participants, searchTerm, statusFilter, roomPrefFilter]);
+      return matchesSearch && matchesStatus && matchesRoomPref
+    })
+  }, [participants, searchTerm, statusFilter, roomPrefFilter])
 
   // Helper to obtain border color mapping from Sleek design
   const getCardBorderLeft = (bedType: string) => {
-    const norm = (bedType || "").toLowerCase();
-    if (norm.includes("single occupancy")) {
-      return "border-l-4 border-l-purple-400";
+    const norm = (bedType || '').toLowerCase()
+    if (norm.includes('single occupancy')) {
+      return 'border-l-4 border-l-purple-400'
     }
-    if (norm.includes("shared")) {
-      return "border-l-4 border-l-amber-400";
+    if (norm.includes('shared')) {
+      return 'border-l-4 border-l-amber-400'
     }
-    return "border-l-4 border-l-indigo-400"; // single bed default
-  };
+    return 'border-l-4 border-l-indigo-400' // single bed default
+  }
 
   // Drag start handler - injects participant identifier
   const handleDragStart = (e: React.DragEvent, participant: Participant) => {
-    e.dataTransfer.setData("text/plain", participant.id);
-    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData('text/plain', participant.id)
+    e.dataTransfer.effectAllowed = 'move'
     if (onDragStartGuest) {
-      onDragStartGuest(participant);
+      onDragStartGuest(participant)
     }
-  };
+  }
 
   const handleDragEnd = () => {
     if (onDragEndGuest) {
-      onDragEndGuest();
+      onDragEndGuest()
     }
-  };
+  }
 
   return (
-    <div id="participant-pool-card" className="bg-white rounded-xl shadow-xs border border-slate-200 p-5 h-full flex flex-col min-h-[500px] xl:h-[calc(100vh-14rem)]">
-      
+    <div
+      id="participant-pool-card"
+      className="bg-white rounded-xl shadow-xs border border-slate-200 p-5 h-full flex flex-col min-h-[500px] xl:h-[calc(100vh-14rem)]"
+    >
       {/* Header section with Stats */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-100 pb-4 mb-4">
         <div>
@@ -115,7 +115,7 @@ export default function ParticipantPool({
             Guests Registry Pool
           </h3>
           <p className="text-xs text-slate-400 mt-0.5 font-medium leading-none">
-            {participants.filter(p => !p.assignedRoomId).length} unassigned / {participants.length} total signups
+            {participants.filter((p) => !p.assignedRoomId).length} unassigned / {participants.length} total signups
           </p>
         </div>
 
@@ -127,7 +127,7 @@ export default function ParticipantPool({
           </div>
           <div className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
-            Occupied: {participants.filter(p => p.assignedRoomId).length}
+            Occupied: {participants.filter((p) => p.assignedRoomId).length}
           </div>
         </div>
       </div>
@@ -156,8 +156,8 @@ export default function ParticipantPool({
               id="status-filter-select"
               value={statusFilter}
               onChange={(e) => {
-                setStatusFilter(e.target.value as any);
-                setSelectedForQuickAssign(null);
+                setStatusFilter(e.target.value as any)
+                setSelectedForQuickAssign(null)
               }}
               className="text-xs py-1.5 px-2 border border-slate-200 rounded-md bg-slate-55 text-slate-600 focus:outline-hidden focus:ring-1 focus:ring-indigo-500 font-medium cursor-pointer"
             >
@@ -174,14 +174,16 @@ export default function ParticipantPool({
               id="room-pref-filter-select"
               value={roomPrefFilter}
               onChange={(e) => {
-                setRoomPrefFilter(e.target.value);
-                setSelectedForQuickAssign(null);
+                setRoomPrefFilter(e.target.value)
+                setSelectedForQuickAssign(null)
               }}
               className="text-xs py-1.5 px-2 border border-slate-200 rounded-md bg-slate-55 text-slate-600 focus:outline-hidden focus:ring-1 focus:ring-indigo-500 font-medium cursor-pointer"
             >
               <option value="all">All room choices</option>
-              {roomPrefOptions.map(pref => (
-                <option key={pref} value={pref}>{pref}</option>
+              {roomPrefOptions.map((pref) => (
+                <option key={pref} value={pref}>
+                  {pref}
+                </option>
               ))}
             </select>
           </div>
@@ -189,8 +191,10 @@ export default function ParticipantPool({
       </div>
 
       {/* Draggable Cards Stack */}
-      <div className="flex-1 overflow-y-auto pr-1 space-y-3 custom-scrollbar" style={{ maxHeight: "calc(100vh - 28rem)", minHeight: "260px" }}>
-        
+      <div
+        className="flex-1 overflow-y-auto pr-1 space-y-3 custom-scrollbar"
+        style={{ maxHeight: 'calc(100vh - 28rem)', minHeight: '260px' }}
+      >
         {filteredParticipants.length === 0 ? (
           <div className="py-12 px-4 flex flex-col items-center justify-center text-center border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/55">
             <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-mono mb-3">
@@ -198,16 +202,18 @@ export default function ParticipantPool({
             </div>
             <p className="text-xs font-semibold text-slate-600">No matching guests found</p>
             <p className="text-[11px] text-slate-400 mt-1 max-w-[200px]">
-              {searchTerm || roomPrefFilter !== "all" 
-                ? "Try clearing filters or search queries above." 
-                : "All guests have already been assigned to rooms!"}
+              {searchTerm || roomPrefFilter !== 'all'
+                ? 'Try clearing filters or search queries above.'
+                : 'All guests have already been assigned to rooms!'}
             </p>
           </div>
         ) : (
-          filteredParticipants.map(participant => {
-            const isAssigned = !!participant.assignedRoomId;
-            const isQuickAssignOpen = selectedForQuickAssign === participant.id;
-            const borderLeftClass = isAssigned ? "border-l-2 border-l-slate-200" : getCardBorderLeft(participant.requestedBedType);
+          filteredParticipants.map((participant) => {
+            const isAssigned = !!participant.assignedRoomId
+            const isQuickAssignOpen = selectedForQuickAssign === participant.id
+            const borderLeftClass = isAssigned
+              ? 'border-l-2 border-l-slate-200'
+              : getCardBorderLeft(participant.requestedBedType)
 
             return (
               <div
@@ -218,8 +224,8 @@ export default function ParticipantPool({
                 onDragEnd={handleDragEnd}
                 className={`relative group border rounded-xl p-3.5 transition-all text-left flex flex-col space-y-2 select-none shadow-xs ${borderLeftClass} ${
                   isAssigned
-                    ? "bg-slate-50/60 border-slate-200 text-slate-400"
-                    : "bg-white border-slate-200 hover:border-slate-350 hover:shadow-xs active:cursor-grabbing cursor-grab"
+                    ? 'bg-slate-50/60 border-slate-200 text-slate-400'
+                    : 'bg-white border-slate-200 hover:border-slate-350 hover:shadow-xs active:cursor-grabbing cursor-grab'
                 }`}
               >
                 {/* Drag Handle Indicator for Unassigned */}
@@ -233,7 +239,7 @@ export default function ParticipantPool({
 
                 {/* Participant Identity */}
                 <div className="pr-6">
-                  <h4 className={`text-xs font-bold ${isAssigned ? "text-slate-550 line-through" : "text-slate-800"}`}>
+                  <h4 className={`text-xs font-bold ${isAssigned ? 'text-slate-550 line-through' : 'text-slate-800'}`}>
                     {participant.name}
                   </h4>
                   {isAssigned && (
@@ -261,8 +267,8 @@ export default function ParticipantPool({
                 {/* Free Text Note */}
                 {participant.sharingPreferences && (
                   <div className="p-2 rounded bg-slate-50 text-[10px] text-slate-600 leading-normal border-l-2 border-indigo-200">
-                    <span className="font-bold text-indigo-700 block mb-0.5">Preference & Share details:</span>
-                    "{participant.sharingPreferences}"
+                    <span className="font-bold text-indigo-700 block mb-0.5">Preference & Share details:</span>"
+                    {participant.sharingPreferences}"
                   </div>
                 )}
 
@@ -290,7 +296,7 @@ export default function ParticipantPool({
                         <div className="absolute left-0 right-0 mt-2 p-2.5 bg-white rounded-xl shadow-lg border border-slate-200 z-50 text-xs space-y-2 animate-fadeIn max-h-56 overflow-y-auto">
                           <div className="flex items-center justify-between border-b pb-1.5">
                             <span className="font-bold text-slate-700">Select Available Bed:</span>
-                            <button 
+                            <button
                               onClick={() => setSelectedForQuickAssign(null)}
                               className="text-[10px] text-slate-400 hover:text-slate-600"
                             >
@@ -298,13 +304,16 @@ export default function ParticipantPool({
                             </button>
                           </div>
                           {(() => {
-                            const matchingBeds = vacantBeds.filter(bed => {
-                              const targetRoom = rooms.find(r => r.id === bed.roomId);
-                              if (!targetRoom) return false;
-                              const roomMatches = targetRoom.category.trim().toLowerCase() === participant.requestedRoomType.trim().toLowerCase();
-                              const bedMatches = bed.bedType.trim().toLowerCase() === participant.requestedBedType.trim().toLowerCase();
-                              return roomMatches && bedMatches;
-                            });
+                            const matchingBeds = vacantBeds.filter((bed) => {
+                              const targetRoom = rooms.find((r) => r.id === bed.roomId)
+                              if (!targetRoom) return false
+                              const roomMatches =
+                                targetRoom.category.trim().toLowerCase() ===
+                                participant.requestedRoomType.trim().toLowerCase()
+                              const bedMatches =
+                                bed.bedType.trim().toLowerCase() === participant.requestedBedType.trim().toLowerCase()
+                              return roomMatches && bedMatches
+                            })
 
                             if (matchingBeds.length === 0) {
                               return (
@@ -316,17 +325,17 @@ export default function ParticipantPool({
                                     🛏️ Configuration {participant.requestedBedType}
                                   </div>
                                 </div>
-                              );
+                              )
                             }
 
                             return (
                               <div className="space-y-1">
-                                {matchingBeds.map(bed => (
+                                {matchingBeds.map((bed) => (
                                   <button
                                     key={bed.bedId}
                                     onClick={() => {
-                                      onManualAssign(participant.id, bed.roomId, bed.bedId);
-                                      setSelectedForQuickAssign(null);
+                                      onManualAssign(participant.id, bed.roomId, bed.bedId)
+                                      setSelectedForQuickAssign(null)
                                     }}
                                     className="w-full text-left p-1.5 hover:bg-emerald-50 rounded text-[11px] text-slate-705 font-semibold flex items-center justify-between border border-transparent hover:border-emerald-250 cursor-pointer"
                                   >
@@ -337,26 +346,24 @@ export default function ParticipantPool({
                                   </button>
                                 ))}
                               </div>
-                            );
+                            )
                           })()}
                         </div>
                       )}
                     </div>
                   )}
                 </div>
-
               </div>
-            );
+            )
           })
         )}
-
       </div>
 
       {/* Foot instructions */}
       <p className="text-[10px] text-slate-400 mt-4 leading-normal bg-slate-50 p-2.5 rounded-lg border border-slate-150">
-        💡 <span className="font-semibold text-slate-600">Tip:</span> Pick up any guest card and drag them directly into the designated bed circles in the room cards. 
+        💡 <span className="font-semibold text-slate-600">Tip:</span> Pick up any guest card and drag them directly into
+        the designated bed circles in the room cards.
       </p>
-
     </div>
-  );
+  )
 }
