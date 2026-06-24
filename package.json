@@ -1,7 +1,8 @@
 {
-  "name": "react-example",
+  "name": "event-room-organizer",
+  "description": "An interactive event room and bed planning tool. Drag-and-drop participants into beds, upload rooms and registrations via CSV, and export custom print-ready room allocations to PDF.",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
@@ -13,7 +14,6 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@google/genai": "^2.4.0",
     "@tailwindcss/vite": "^4.1.14",
     "@vitejs/plugin-react": "^5.0.4",
     "dotenv": "^17.2.3",

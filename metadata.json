@@ -1,6 +1,0 @@
-{
-  "name": "Event Room Organizer",
-  "description": "An interactive event room and bed planning tool. Drag-and-drop participants into beds, upload rooms and registrations via CSV, and export custom print-ready room allocations to PDF.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
