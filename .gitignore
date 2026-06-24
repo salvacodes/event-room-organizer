@@ -9,5 +9,8 @@ coverage/
 # IDEs
 .idea/
 
+# Claude Plugins
+.superpowers/
+
 # OS
 .DS_Store
