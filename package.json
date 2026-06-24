@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "format": "biome format --write",
+    "format:check": "biome format",
     "lint": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest"
