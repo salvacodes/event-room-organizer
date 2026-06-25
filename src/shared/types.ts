@@ -1,6 +1,10 @@
+import type { BedType } from './bedTypes'
+
+export type { BedType }
+
 export interface Bed {
   id: string
-  type: 'single bed' | 'double bed (single occupancy)' | 'double bed (shared)'
+  type: BedType
   label?: string
   assignedParticipantId?: string | null
 }
@@ -16,7 +20,7 @@ export interface Participant {
   id: string
   name: string
   requestedRoomType: string
-  requestedBedType: string
+  requestedBedType: BedType
   sharingPreferences: string
   assignedRoomId?: string | null
   assignedBedId?: string | null
