@@ -32,9 +32,6 @@ interface WorkspaceStore {
   setRoomTypeFilter: (filter: string) => void
 }
 
-const ROOMS_KEY = 'event_room_organizer_rooms_v1'
-const PARTICIPANTS_KEY = 'event_room_organizer_participants_v1'
-
 function buildDefaultDataset(): { rooms: Room[]; participants: Participant[] } {
   const roomRows = parseCSV(SAMPLE_EXACT_ROOMS_CSV)
   const rooms: Room[] = []
@@ -66,39 +63,8 @@ function buildDefaultDataset(): { rooms: Room[]; participants: Participant[] } {
   return { rooms, participants }
 }
 
-function loadInitialState(): Pick<WorkspaceStore, 'rooms' | 'participants' | 'history' | 'historyIndex'> {
-  const savedRooms = localStorage.getItem(ROOMS_KEY)
-  const savedParticipants = localStorage.getItem(PARTICIPANTS_KEY)
-
-  if (savedRooms && savedParticipants) {
-    try {
-      const rooms = JSON.parse(savedRooms) as Room[]
-      const rawParticipants = JSON.parse(savedParticipants) as Array<
-        Omit<Participant, 'requestedRoomType'> & { requestedRoomType: string | string[] }
-      >
-      const participants: Participant[] = rawParticipants.map((p) => ({
-        ...p,
-        requestedRoomType: Array.isArray(p.requestedRoomType)
-          ? p.requestedRoomType
-          : [p.requestedRoomType].filter(Boolean)
-      }))
-      return { rooms, participants, history: [{ rooms, participants }], historyIndex: 0 }
-    } catch {
-      console.warn('Stale local storage format. Re-rendering default pre-sets.')
-    }
-  }
-
-  const { rooms, participants } = buildDefaultDataset()
-  localStorage.setItem(ROOMS_KEY, JSON.stringify(rooms))
-  localStorage.setItem(PARTICIPANTS_KEY, JSON.stringify(participants))
-  return { rooms, participants, history: [{ rooms, participants }], historyIndex: 0 }
-}
-
 export const useWorkspaceStore = create<WorkspaceStore>()((set, get) => {
   function commitWorkspaceState(rooms: Room[], participants: Participant[]) {
-    localStorage.setItem(ROOMS_KEY, JSON.stringify(rooms))
-    localStorage.setItem(PARTICIPANTS_KEY, JSON.stringify(participants))
-
     const { history, historyIndex } = get()
     const currentHistory = history.slice(0, historyIndex + 1)
     const updatedHistory = [...currentHistory, { rooms, participants }]
@@ -107,12 +73,17 @@ export const useWorkspaceStore = create<WorkspaceStore>()((set, get) => {
     set({ rooms, participants, history: updatedHistory, historyIndex: updatedHistory.length - 1 })
   }
 
+  const { rooms, participants } = buildDefaultDataset()
+
   return {
-    ...loadInitialState(),
+    rooms,
+    participants,
+    history: [{ rooms, participants }],
+    historyIndex: 0,
     draggedParticipant: null,
     assignError: null,
     autoAllocateResult: null,
-    activeTab: 'board' as ActiveTab,
+    activeTab: 'csv' as ActiveTab,
     roomTypeFilter: 'all',
 
     loadData: (rooms, participants) => {
@@ -238,8 +209,6 @@ export const useWorkspaceStore = create<WorkspaceStore>()((set, get) => {
       if (historyIndex <= 0) return
       const prevIndex = historyIndex - 1
       const state = history[prevIndex]
-      localStorage.setItem(ROOMS_KEY, JSON.stringify(state.rooms))
-      localStorage.setItem(PARTICIPANTS_KEY, JSON.stringify(state.participants))
       set({ rooms: state.rooms, participants: state.participants, historyIndex: prevIndex })
     },
 
@@ -248,8 +217,6 @@ export const useWorkspaceStore = create<WorkspaceStore>()((set, get) => {
       if (historyIndex >= history.length - 1) return
       const nextIndex = historyIndex + 1
       const state = history[nextIndex]
-      localStorage.setItem(ROOMS_KEY, JSON.stringify(state.rooms))
-      localStorage.setItem(PARTICIPANTS_KEY, JSON.stringify(state.participants))
       set({ rooms: state.rooms, participants: state.participants, historyIndex: nextIndex })
     },
 

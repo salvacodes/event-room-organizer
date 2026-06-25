@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import type { Bed, Participant, Room } from '../shared/types'
 import { useWorkspaceStore } from './useWorkspaceStore'
 
@@ -40,10 +40,6 @@ function resetStore(rooms: Room[], participants: Participant[]) {
 }
 
 describe('assignParticipant', () => {
-  beforeEach(() => {
-    localStorage.clear()
-  })
-
   it('assigns a participant to a room matching any of their multiple requested room types', () => {
     const room = makeRoom('Room 2B', '2B', ['single'])
     const participant: Participant = {
@@ -80,10 +76,6 @@ describe('assignParticipant', () => {
 })
 
 describe('autoAllocate', () => {
-  beforeEach(() => {
-    localStorage.clear()
-  })
-
   describe('when there are matches', () => {
     it('sets autoAllocateResult.matchesCount when guests are assigned', () => {
       const rooms = [makeRoom('Room A', 'Standard', ['single'])]
@@ -135,10 +127,6 @@ describe('autoAllocate', () => {
 })
 
 describe('roomTypeFilter', () => {
-  beforeEach(() => {
-    localStorage.clear()
-  })
-
   it('defaults to "all"', () => {
     useWorkspaceStore.setState({ roomTypeFilter: 'all' })
     expect(useWorkspaceStore.getState().roomTypeFilter).toBe('all')
@@ -157,43 +145,32 @@ describe('roomTypeFilter', () => {
   })
 })
 
-describe('loadInitialState — stale localStorage migration', () => {
-  it('normalizes requestedRoomType from string to array when loading from localStorage', async () => {
-    const staleParticipants = [
-      {
-        id: 'p1',
-        name: 'Guest One',
-        requestedRoomType: 'Standard',
-        requestedBedType: 'single',
-        sharingPreferences: '',
-        assignedRoomId: null,
-        assignedBedId: null
-      }
-    ]
-    const rooms = [
-      {
-        id: 'Room A',
-        category: 'Standard',
-        capacity: 1,
-        beds: [{ id: 'Room A-bed-0', type: 'single', label: 'Bed 0', assignedParticipantId: null }]
-      }
-    ]
-    localStorage.setItem('event_room_organizer_rooms_v1', JSON.stringify(rooms))
-    localStorage.setItem('event_room_organizer_participants_v1', JSON.stringify(staleParticipants))
-
+describe('activeTab', () => {
+  it('defaults to csv tab on initial load', async () => {
     vi.resetModules()
     const { useWorkspaceStore: freshStore } = await import('./useWorkspaceStore')
-    const participants = freshStore.getState().participants
+    expect(freshStore.getState().activeTab).toBe('csv')
+  })
+})
 
-    expect(participants[0].requestedRoomType).toEqual(['Standard'])
+describe('localStorage', () => {
+  it('does not write to localStorage when store actions are performed', () => {
+    const setItemSpy = vi.spyOn(Storage.prototype, 'setItem')
+    const rooms = [makeRoom('Room A', 'Standard', ['single'])]
+    const participants = [makeParticipant('p1', 'Standard', 'single')]
+    resetStore(rooms, participants)
+
+    useWorkspaceStore.getState().assignParticipant('p1', 'Room A', 'Room A-bed-0')
+    useWorkspaceStore.getState().removeAssignment('p1')
+    useWorkspaceStore.getState().autoAllocate()
+    useWorkspaceStore.getState().resetAllocations()
+
+    expect(setItemSpy).not.toHaveBeenCalled()
+    setItemSpy.mockRestore()
   })
 })
 
 describe('resetAllocations', () => {
-  beforeEach(() => {
-    localStorage.clear()
-  })
-
   it('clears all bed assignments and commits to history', () => {
     const rooms = [makeRoom('Room A', 'Standard', ['single'])]
     const participants = [makeParticipant('p1', 'Standard', 'single')]
