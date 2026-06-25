@@ -14,6 +14,7 @@ export default function RoomCard({ room }: RoomCardProps) {
   const draggedParticipant = useWorkspaceStore((s) => s.draggedParticipant)
   const assignParticipant = useWorkspaceStore((s) => s.assignParticipant)
   const removeAssignment = useWorkspaceStore((s) => s.removeAssignment)
+  const setDraggedParticipant = useWorkspaceStore((s) => s.setDraggedParticipant)
 
   const [isDragOver, setIsDragOver] = useState(false)
   const [activeDragBedId, setActiveDragBedId] = useState<string | null>(null)
@@ -58,6 +59,7 @@ export default function RoomCard({ room }: RoomCardProps) {
     const participantId = e.dataTransfer.getData('text/plain')
     if (participantId) {
       assignParticipant(participantId, room.id, bedId)
+      setDraggedParticipant(null)
     }
   }
 
