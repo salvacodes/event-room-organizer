@@ -53,7 +53,7 @@ function buildDefaultDataset(): { rooms: Room[]; participants: Participant[] } {
       requestedBedType: row[2] || 'single bed',
       sharingPreferences: row[3] || '',
       assignedRoomId: null,
-      assignedBedId: null,
+      assignedBedId: null
     })
   }
 
@@ -117,9 +117,12 @@ export const useWorkspaceStore = create<WorkspaceStore>()((set, get) => {
       if (!bed) return
 
       const norm = (s: string) => (s || '').trim().toLowerCase()
-      if (norm(participant.requestedRoomType) !== norm(room.category) || norm(participant.requestedBedType) !== norm(bed.type)) {
+      if (
+        norm(participant.requestedRoomType) !== norm(room.category) ||
+        norm(participant.requestedBedType) !== norm(bed.type)
+      ) {
         set({
-          assignError: `Assignment Blocked: "${participant.name}" requested Room Category [${participant.requestedRoomType}] and Bed Config [${participant.requestedBedType}]. You attempted to place them in a Room of Category [${room.category}] and Bed Config [${bed.label || bed.type}].`,
+          assignError: `Assignment Blocked: "${participant.name}" requested Room Category [${participant.requestedRoomType}] and Bed Config [${participant.requestedBedType}]. You attempted to place them in a Room of Category [${room.category}] and Bed Config [${bed.label || bed.type}].`
         })
         return
       }
@@ -176,7 +179,7 @@ export const useWorkspaceStore = create<WorkspaceStore>()((set, get) => {
       const { rooms, participants } = get()
       const clearedRooms = rooms.map((r) => ({
         ...r,
-        beds: r.beds.map((b) => ({ ...b, assignedParticipantId: null })),
+        beds: r.beds.map((b) => ({ ...b, assignedParticipantId: null }))
       }))
       const clearedParticipants = participants.map((p) => ({ ...p, assignedRoomId: null, assignedBedId: null }))
       commitWorkspaceState(clearedRooms, clearedParticipants)
@@ -246,6 +249,6 @@ export const useWorkspaceStore = create<WorkspaceStore>()((set, get) => {
 
     setDraggedParticipant: (participant) => set({ draggedParticipant: participant }),
     clearAssignError: () => set({ assignError: null }),
-    setActiveTab: (tab) => set({ activeTab: tab }),
+    setActiveTab: (tab) => set({ activeTab: tab })
   }
 })
