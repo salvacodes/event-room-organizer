@@ -82,6 +82,15 @@ describe('ParticipantPool — room type filter label', () => {
   })
 })
 
+describe('ParticipantPool — touch drag support', () => {
+  it('sets touch-action none on draggable participant cards to prevent iPad scroll interference', () => {
+    setupMock([unassigned])
+    render(<ParticipantPool />)
+    const card = document.getElementById(`participant-${unassigned.id}`)
+    expect(card?.style.touchAction).toBe('none')
+  })
+})
+
 describe('ParticipantPool — unassigned-only visibility', () => {
   it('renders unassigned participants', () => {
     setupMock()

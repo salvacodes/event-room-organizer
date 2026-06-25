@@ -1,4 +1,4 @@
-import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core'
+import type { DragCancelEvent, DragEndEvent, DragStartEvent } from '@dnd-kit/core'
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { RotateCcw, RotateCw, Sparkles, XCircle } from 'lucide-react'
 import { useState } from 'react'
@@ -55,8 +55,17 @@ export default function AllocationBoard() {
     }
   }
 
+  const handleDragCancel = (_event: DragCancelEvent) => {
+    setDraggedParticipant(null)
+  }
+
   return (
-    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+    <DndContext
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      onDragCancel={handleDragCancel}
+    >
       <div className="flex gap-6 h-full min-h-0">
         <div className="h-full overflow-y-auto w-80 flex-shrink-0 print:hidden custom-scrollbar">
           <ParticipantPool />

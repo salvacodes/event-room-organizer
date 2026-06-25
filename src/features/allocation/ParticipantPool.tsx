@@ -36,7 +36,7 @@ function DraggableParticipantCard({
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      style={{ opacity: isDragging ? 0.5 : 1 }}
+      style={{ opacity: isDragging ? 0.5 : 1, touchAction: 'none' }}
       className={`relative group border rounded-xl p-3.5 transition-all text-left flex flex-col space-y-2 select-none shadow-xs ${getCardBorderLeft(participant.requestedBedType)} bg-white border-slate-200 hover:border-slate-350 hover:shadow-xs active:cursor-grabbing cursor-grab`}
     >
       <div className="absolute top-3.5 right-3 w-4 h-5 flex flex-col items-center justify-between py-1 opacity-20 group-hover:opacity-40">
