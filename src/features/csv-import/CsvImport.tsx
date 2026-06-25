@@ -170,7 +170,7 @@ export default function CsvImport() {
               value={roomsCsv}
               onChange={(e) => setRoomsCsv(e.target.value)}
               placeholder='Room,Type,Beds&#10;101 - Pine Cabin,Standard,"1 double bed (single occupancy), 1 single bed"'
-              className="w-full h-56 font-mono text-xs p-3 bg-slate-900 text-slate-200 rounded-lg border border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden leading-relaxed custom-scrollbar"
+              className="w-full h-[calc(100vh-520px)] min-h-[200px] font-mono text-xs p-3 bg-slate-900 text-slate-200 rounded-lg border border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden leading-relaxed custom-scrollbar"
             />
             <div className="absolute top-2 right-2 flex items-center text-slate-500 bg-slate-900/60 px-2 py-0.5 rounded text-[10px] font-semibold select-none pointer-events-none">
               CSV Editor
@@ -207,7 +207,7 @@ export default function CsvImport() {
               value={guestsCsv}
               onChange={(e) => setGuestsCsv(e.target.value)}
               placeholder='Name,Room,Bed,Notes&#10;"David Miller",Standard,single bed,"Agreed to share with Harry"'
-              className="w-full h-56 font-mono text-xs p-3 bg-slate-900 text-slate-200 rounded-lg border border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden leading-relaxed custom-scrollbar opacity-100"
+              className="w-full h-[calc(100vh-520px)] min-h-[200px] font-mono text-xs p-3 bg-slate-900 text-slate-200 rounded-lg border border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden leading-relaxed custom-scrollbar opacity-100"
             />
             <div className="absolute top-2 right-2 flex items-center text-slate-500 bg-slate-900/60 px-2 py-0.5 rounded text-[10px] font-semibold select-none pointer-events-none">
               CSV Editor

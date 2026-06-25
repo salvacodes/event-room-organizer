@@ -31,12 +31,12 @@ export default function AllocationBoard() {
   const toastVariant = autoAllocateResult?.matchesCount ? 'success' : 'warning'
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
-      <div className="xl:col-span-4 print:hidden">
+    <div className="flex gap-6 items-start">
+      <div className="sticky top-[129px] h-[calc(100vh-129px)] overflow-y-auto w-80 flex-shrink-0 print:hidden custom-scrollbar">
         <ParticipantPool />
       </div>
 
-      <div className="xl:col-span-8 space-y-6">
+      <div className="flex-1 min-w-0 space-y-6">
         <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 print:hidden">
           <div className="min-w-0">
             <h2 className="text-sm font-bold text-slate-800">Drag & Drop to Allocate</h2>
@@ -128,7 +128,7 @@ export default function AllocationBoard() {
             </p>
           </div>
         ) : (
-          <div id="rooms-bento-grid" className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div id="rooms-bento-grid" className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {rooms.map((room) => (
               <RoomCard key={room.id} room={room} />
             ))}

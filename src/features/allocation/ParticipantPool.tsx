@@ -72,7 +72,7 @@ export default function ParticipantPool() {
   return (
     <div
       id="participant-pool-card"
-      className="bg-white rounded-xl shadow-xs border border-slate-200 p-5 h-full flex flex-col min-h-[500px] xl:h-[calc(100vh-14rem)]"
+      className="bg-white rounded-xl shadow-xs border border-slate-200 p-5 flex flex-col h-full"
     >
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-100 pb-4 mb-4">
         <div>
@@ -146,10 +146,7 @@ export default function ParticipantPool() {
         </div>
       </div>
 
-      <div
-        className="flex-1 overflow-y-auto pr-1 space-y-3 custom-scrollbar"
-        style={{ maxHeight: 'calc(100vh - 28rem)', minHeight: '260px' }}
-      >
+      <div className="flex-1 overflow-y-auto pr-1 space-y-3 custom-scrollbar min-h-0">
         {filteredParticipants.length === 0 ? (
           <div className="py-12 px-4 flex flex-col items-center justify-center text-center border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/55">
             <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-mono mb-3">

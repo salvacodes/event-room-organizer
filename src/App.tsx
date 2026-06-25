@@ -18,11 +18,11 @@ export default function App() {
     <div id="application-container" className="min-h-screen bg-[#F8FAFC] text-slate-800 flex flex-col font-sans">
       <header
         id="application-header"
-        className="bg-slate-900 text-white border-b border-slate-950 px-6 py-4 sticky top-0 z-40 print:hidden shadow-md"
+        className="bg-slate-900 text-white border-b border-slate-950 sticky top-0 z-40 print:hidden shadow-md"
       >
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 text-white font-black select-none pointer-events-none">
+            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 text-white font-black select-none pointer-events-none flex-shrink-0">
               <span className="text-lg">🛏️</span>
             </div>
             <div>
@@ -38,30 +38,30 @@ export default function App() {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="items-center gap-3 bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg hidden sm:flex">
-              <div className="text-center font-mono">
-                <span className="block text-[9px] text-slate-400 font-bold uppercase tracking-wider">Assigned</span>
-                <span className="text-xs text-white font-extrabold">
-                  {assignedCount} / {totalBedsCount}
-                </span>
-              </div>
-              <div className="h-6 w-px bg-slate-700" />
-              <div className="text-center font-mono">
-                <span className="block text-[9px] text-slate-400 font-bold uppercase tracking-wider">Unassigned</span>
-                <span className="text-xs text-amber-400 font-extrabold">{unassignedCount}</span>
-              </div>
+          <div className="items-center gap-3 bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg hidden sm:flex">
+            <div className="text-center font-mono">
+              <span className="block text-[9px] text-slate-400 font-bold uppercase tracking-wider">Assigned</span>
+              <span className="text-xs text-white font-extrabold">
+                {assignedCount} / {totalBedsCount}
+              </span>
+            </div>
+            <div className="h-6 w-px bg-slate-700" />
+            <div className="text-center font-mono">
+              <span className="block text-[9px] text-slate-400 font-bold uppercase tracking-wider">Unassigned</span>
+              <span className="text-xs text-amber-400 font-extrabold">{unassignedCount}</span>
             </div>
           </div>
+
+          <div />
         </div>
       </header>
 
       <nav
         id="workspace-navigation"
-        className="bg-white border-b border-slate-200 sticky top-[73px] md:top-[68px] z-30 print:hidden shadow-xs"
+        className="bg-white border-b border-slate-200 sticky top-[73px] md:top-[72px] z-30 print:hidden shadow-xs"
       >
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center py-3 space-x-1.5">
+        <div className="px-6">
+          <div className="flex items-center justify-center py-3 space-x-1.5">
             <button
               type="button"
               id="tab-csv-selector"
@@ -107,15 +107,19 @@ export default function App() {
         </div>
       </nav>
 
-      <main id="workspace-core-view" className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 print:p-0">
-        {activeTab === 'board' && <AllocationBoard />}
+      <main id="workspace-core-view" className="flex-1 w-full print:p-0">
+        {activeTab === 'board' && (
+          <div className="px-4 sm:px-6 py-4 sm:py-6">
+            <AllocationBoard />
+          </div>
+        )}
         {activeTab === 'csv' && (
-          <div className="animate-fadeIn">
+          <div className="animate-fadeIn px-4 sm:px-6 py-4 sm:py-6">
             <CsvImport />
           </div>
         )}
         {activeTab === 'report' && (
-          <div className="animate-fadeIn">
+          <div className="animate-fadeIn px-4 sm:px-6 py-4 sm:py-6">
             <PrintReport />
           </div>
         )}
