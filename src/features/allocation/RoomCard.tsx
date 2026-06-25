@@ -6,6 +6,7 @@ import { useWorkspaceStore } from '../../store/useWorkspaceStore'
 
 interface RoomCardProps {
   room: Room
+  key?: React.Key
 }
 
 export default function RoomCard({ room }: RoomCardProps) {
@@ -69,7 +70,8 @@ export default function RoomCard({ room }: RoomCardProps) {
         cardClassName += ' border-emerald-300 ring-2 ring-emerald-50/50 shadow-xs'
       }
     } else {
-      cardClassName += ' border-rose-100/50 opacity-25 bg-slate-50/60 pointer-events-none cursor-not-allowed select-none'
+      cardClassName +=
+        ' border-rose-100/50 opacity-25 bg-slate-50/60 pointer-events-none cursor-not-allowed select-none'
     }
   } else {
     if (isDragOver) {
@@ -158,16 +160,20 @@ export default function RoomCard({ room }: RoomCardProps) {
 
           const isOverallCompatible = isRoomCompatible && isBedCompatible
 
-          let bedContainerStyle = 'group/bed min-h-12 flex items-center justify-between p-2 rounded-lg border transition-all '
+          let bedContainerStyle =
+            'group/bed min-h-12 flex items-center justify-between p-2 rounded-lg border transition-all '
           if (draggedParticipant) {
             if (isOverallCompatible) {
               if (isBedDragTarget) {
-                bedContainerStyle += 'bg-emerald-50 border-emerald-400 ring-2 ring-emerald-100 animate-pulse text-emerald-900'
+                bedContainerStyle +=
+                  'bg-emerald-50 border-emerald-400 ring-2 ring-emerald-100 animate-pulse text-emerald-900'
               } else {
-                bedContainerStyle += 'bg-emerald-50/20 border-emerald-250 border-dashed hover:border-emerald-350 hover:bg-emerald-50/50 cursor-copy text-emerald-800'
+                bedContainerStyle +=
+                  'bg-emerald-50/20 border-emerald-250 border-dashed hover:border-emerald-350 hover:bg-emerald-50/50 cursor-copy text-emerald-800'
               }
             } else {
-              bedContainerStyle += 'bg-rose-55/10 border-rose-100 opacity-20 cursor-not-allowed select-none pointer-events-none'
+              bedContainerStyle +=
+                'bg-rose-55/10 border-rose-100 opacity-20 cursor-not-allowed select-none pointer-events-none'
             }
           } else {
             if (occupant) {
@@ -177,7 +183,8 @@ export default function RoomCard({ room }: RoomCardProps) {
                 bedContainerStyle += 'bg-blue-50 border-blue-200 hover:bg-blue-100/50 text-blue-900'
               }
             } else if (isBedDragTarget) {
-              bedContainerStyle += 'bg-indigo-50/85 border-indigo-400 border-dashed ring-2 ring-indigo-100 animate-pulse'
+              bedContainerStyle +=
+                'bg-indigo-50/85 border-indigo-400 border-dashed ring-2 ring-indigo-100 animate-pulse'
             } else {
               bedContainerStyle += 'bg-white border-dashed border-slate-250 hover:border-slate-350 hover:bg-slate-50/30'
             }
@@ -195,7 +202,9 @@ export default function RoomCard({ room }: RoomCardProps) {
               <div className="flex items-center gap-2.5 flex-1 min-w-0">
                 <div
                   className={`p-1.5 rounded flex items-center justify-center flex-shrink-0 ${
-                    occupant ? 'bg-white border border-slate-100 text-slate-700 font-bold' : 'bg-slate-100 text-slate-400'
+                    occupant
+                      ? 'bg-white border border-slate-100 text-slate-700 font-bold'
+                      : 'bg-slate-100 text-slate-400'
                   }`}
                 >
                   <span className="text-[10px] uppercase font-mono tracking-tight font-extrabold text-center min-w-4">

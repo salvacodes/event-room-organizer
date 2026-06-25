@@ -170,7 +170,9 @@ export default function ParticipantPool() {
           filteredParticipants.map((participant) => {
             const isAssigned = !!participant.assignedRoomId
             const isQuickAssignOpen = selectedForQuickAssign === participant.id
-            const borderLeftClass = isAssigned ? 'border-l-2 border-l-slate-200' : getCardBorderLeft(participant.requestedBedType)
+            const borderLeftClass = isAssigned
+              ? 'border-l-2 border-l-slate-200'
+              : getCardBorderLeft(participant.requestedBedType)
 
             return (
               <div
@@ -259,7 +261,8 @@ export default function ParticipantPool() {
                               const targetRoom = rooms.find((r) => r.id === bed.roomId)
                               if (!targetRoom) return false
                               return (
-                                targetRoom.category.trim().toLowerCase() === participant.requestedRoomType.trim().toLowerCase() &&
+                                targetRoom.category.trim().toLowerCase() ===
+                                  participant.requestedRoomType.trim().toLowerCase() &&
                                 bed.bedType.trim().toLowerCase() === participant.requestedBedType.trim().toLowerCase()
                               )
                             })

@@ -9,9 +9,9 @@ vi.mock('../../store/useWorkspaceStore', () => ({
       participants: [],
       draggedParticipant: null,
       assignParticipant: vi.fn(),
-      removeAssignment: vi.fn(),
+      removeAssignment: vi.fn()
     })
-  ),
+  )
 }))
 
 describe('RoomCard', () => {
@@ -21,8 +21,8 @@ describe('RoomCard', () => {
     capacity: 2,
     beds: [
       { id: 'bed-1', type: 'single bed', label: 'Single Bed 1', assignedParticipantId: null },
-      { id: 'bed-2', type: 'single bed', label: 'Single Bed 2', assignedParticipantId: null },
-    ],
+      { id: 'bed-2', type: 'single bed', label: 'Single Bed 2', assignedParticipantId: null }
+    ]
   }
 
   it('renders the room information and beds correctly', () => {
