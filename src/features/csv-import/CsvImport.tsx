@@ -135,20 +135,88 @@ export default function CsvImport() {
   }
 
   return (
-    <div id="csv-import-module" className="bg-white rounded-xl shadow-xs border border-slate-200 p-6">
-      <div className="pb-4 border-b border-slate-100 mb-6">
-        <h2 id="csv-import-title" className="text-xl font-semibold text-slate-800 flex items-center gap-2">
-          <Upload className="w-5 h-5 text-indigo-600" />
-          CSV Data Setup Coordinator
-        </h2>
-        <p className="text-xs text-slate-400 mt-1">
-          Initialize or overwrite your event planning lists. Paste data manually or drag in CSV spreadsheets.
-        </p>
+    <div
+      id="csv-import-module"
+      className="bg-white rounded-xl shadow-xs border border-slate-200 p-6 h-full flex flex-col min-h-0"
+    >
+      <div className="flex items-start justify-between gap-4 pb-4 border-b border-slate-100 mb-4 flex-shrink-0">
+        <div>
+          <h2 id="csv-import-title" className="text-base font-semibold text-slate-800 flex items-center gap-2">
+            <Upload className="w-4 h-4 text-indigo-600" />
+            CSV Data Setup Coordinator
+          </h2>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Paste CSV data or upload files, then click Process to load into the workspace.
+          </p>
+        </div>
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="text-xs text-slate-500 hidden sm:block text-right">
+            <span className="bg-slate-100 text-slate-700 font-mono font-semibold px-2 py-0.5 rounded mr-1.5">
+              {rooms.length} Rooms
+            </span>
+            <span className="bg-slate-100 text-slate-700 font-mono font-semibold px-2 py-0.5 rounded">
+              {participants.length} Registrants
+            </span>
+          </div>
+          <button
+            type="button"
+            id="apply-csv-data-btn"
+            onClick={handleProcess}
+            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            Process and Load Lists
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <div className="flex flex-col space-y-2">
-          <div className="flex items-center justify-between">
+      {errorMsg && (
+        <div className="mb-3 p-3 bg-rose-50 border border-rose-200 rounded-lg text-rose-700 text-xs flex items-start gap-2 animate-fadeIn flex-shrink-0">
+          <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+          <span>{errorMsg}</span>
+        </div>
+      )}
+
+      {successMsg && (
+        <div className="mb-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-xs flex items-start gap-2 animate-fadeIn flex-shrink-0">
+          <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-emerald-600" />
+          <span>{successMsg}</span>
+        </div>
+      )}
+
+      <div className="mb-4 p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 flex-shrink-0">
+        <h4 className="font-semibold text-slate-700 flex items-center gap-1 mb-2">
+          <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
+          CSV Column Format & Mapping Guidelines
+        </h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 leading-relaxed">
+          <div>
+            <span className="font-semibold text-slate-700">Room Bed Configuration Rules:</span>
+            <ul className="list-disc pl-4 mt-1 space-y-0.5">
+              <li>
+                <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">single bed</code> (Single/Bunk, cap=1)
+              </li>
+              <li>
+                <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">double bed (single occupancy)</code>{' '}
+                (solo use, cap=1)
+              </li>
+              <li>
+                <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">double bed (shared)</code> (2 slots)
+              </li>
+            </ul>
+          </div>
+          <div>
+            <span className="font-semibold text-slate-700">Registrant Columns:</span> Need{' '}
+            <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">Name</code>. Preferred bed maps to a bed
+            configuration; preferred room matches the Room Type (e.g.,{' '}
+            <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">Standard</code>).
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 min-h-0 grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <div className="flex flex-col min-h-0">
+          <div className="flex items-center justify-between mb-2 flex-shrink-0">
             <label
               htmlFor="raw-rooms-csv-editor"
               className="text-sm font-semibold text-slate-700 flex items-center gap-1.5"
@@ -164,13 +232,13 @@ export default function CsvImport() {
               <input type="file" accept=".csv" onChange={(e) => handleFileUpload(e, 'rooms')} className="hidden" />
             </label>
           </div>
-          <div className="relative">
+          <div className="flex-1 min-h-0 relative">
             <textarea
               id="raw-rooms-csv-editor"
               value={roomsCsv}
               onChange={(e) => setRoomsCsv(e.target.value)}
               placeholder='Room,Type,Beds&#10;101 - Pine Cabin,Standard,"1 double bed (single occupancy), 1 single bed"'
-              className="w-full h-[calc(100vh-520px)] min-h-[200px] font-mono text-xs p-3 bg-slate-900 text-slate-200 rounded-lg border border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden leading-relaxed custom-scrollbar"
+              className="w-full h-full font-mono text-xs p-3 bg-slate-900 text-slate-200 rounded-lg border border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden leading-relaxed custom-scrollbar resize-none"
             />
             <div className="absolute top-2 right-2 flex items-center text-slate-500 bg-slate-900/60 px-2 py-0.5 rounded text-[10px] font-semibold select-none pointer-events-none">
               CSV Editor
@@ -178,8 +246,8 @@ export default function CsvImport() {
           </div>
         </div>
 
-        <div className="flex flex-col space-y-2">
-          <div className="flex items-center justify-between">
+        <div className="flex flex-col min-h-0">
+          <div className="flex items-center justify-between mb-2 flex-shrink-0">
             <label
               htmlFor="raw-registrants-csv-editor"
               className="text-sm font-semibold text-slate-700 flex items-center gap-1.5"
@@ -201,13 +269,13 @@ export default function CsvImport() {
               />
             </label>
           </div>
-          <div className="relative">
+          <div className="flex-1 min-h-0 relative">
             <textarea
               id="raw-registrants-csv-editor"
               value={guestsCsv}
               onChange={(e) => setGuestsCsv(e.target.value)}
               placeholder='Name,Room,Bed,Notes&#10;"David Miller",Standard,single bed,"Agreed to share with Harry"'
-              className="w-full h-[calc(100vh-520px)] min-h-[200px] font-mono text-xs p-3 bg-slate-900 text-slate-200 rounded-lg border border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden leading-relaxed custom-scrollbar opacity-100"
+              className="w-full h-full font-mono text-xs p-3 bg-slate-900 text-slate-200 rounded-lg border border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden leading-relaxed custom-scrollbar resize-none"
             />
             <div className="absolute top-2 right-2 flex items-center text-slate-500 bg-slate-900/60 px-2 py-0.5 rounded text-[10px] font-semibold select-none pointer-events-none">
               CSV Editor
@@ -215,78 +283,6 @@ export default function CsvImport() {
           </div>
         </div>
       </div>
-
-      <div className="mt-4 p-4 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 space-y-2">
-        <h4 className="font-semibold text-slate-700 flex items-center gap-1">
-          <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
-          CSV Column Format & Mapping Guidelines
-        </h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 leading-relaxed">
-          <div>
-            <span className="font-semibold text-slate-700">Room Bed Configuration Rules:</span>
-            <ul className="list-disc pl-4 mt-1 space-y-1 block">
-              <li>
-                <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">single bed</code> (Single/Bunk, cap=1)
-              </li>
-              <li>
-                <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">double bed (single occupancy)</code>{' '}
-                (Double bed for solo use, cap=1)
-              </li>
-              <li>
-                <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">double bed (shared)</code> (Double bed
-                for 2 people, parsed as 2 assignable slots)
-              </li>
-            </ul>
-          </div>
-          <div>
-            <span className="font-semibold text-slate-700">Registrant Columns:</span> Need name (
-            <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">Name</code>). The preferred bed should map
-            directly to one of the bed configurations, and preferred rooms will match the Room Type (e.g.,{' '}
-            <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">Type A</code>,{' '}
-            <code className="bg-slate-200 px-1 rounded">Type C</code>).
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-6 flex flex-col md:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100">
-        <div className="flex items-center gap-3">
-          <div className="text-slate-500 text-xs text-center md:text-left">
-            <span className="font-medium text-slate-700 block md:inline">Current Workspace State: </span>
-            <span className="bg-slate-100 text-slate-700 font-mono font-semibold px-2 py-0.5 rounded mr-2">
-              {rooms.length} Rooms
-            </span>
-            <span className="bg-slate-100 text-slate-700 font-mono font-semibold px-2 py-0.5 rounded">
-              {participants.length} Registrants
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3 self-stretch md:self-auto">
-          <button
-            type="button"
-            id="apply-csv-data-btn"
-            onClick={handleProcess}
-            className="flex-1 md:flex-none px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-sm transition-all shadow-md active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
-          >
-            <RefreshCw className="w-4 h-4" />
-            Process and Load Lists
-          </button>
-        </div>
-      </div>
-
-      {errorMsg && (
-        <div className="mt-4 p-3 bg-rose-50 border border-rose-200 rounded-lg text-rose-700 text-xs flex items-start gap-2 animate-fadeIn">
-          <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-          <span>{errorMsg}</span>
-        </div>
-      )}
-
-      {successMsg && (
-        <div className="mt-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-xs flex items-start gap-2 animate-fadeIn">
-          <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-emerald-600" />
-          <span>{successMsg}</span>
-        </div>
-      )}
     </div>
   )
 }

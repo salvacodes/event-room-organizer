@@ -12,7 +12,6 @@ export default function ParticipantPool() {
   const setDraggedParticipant = useWorkspaceStore((s) => s.setDraggedParticipant)
 
   const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState<'unassigned' | 'assigned' | 'all'>('unassigned')
   const [roomPrefFilter, setRoomPrefFilter] = useState('all')
   const [selectedForQuickAssign, setSelectedForQuickAssign] = useState<string | null>(null)
 
@@ -43,14 +42,10 @@ export default function ParticipantPool() {
         p.name.toLowerCase().includes(term) ||
         p.sharingPreferences.toLowerCase().includes(term) ||
         p.requestedRoomType?.toLowerCase().includes(term)
-      const matchesStatus =
-        statusFilter === 'all' ||
-        (statusFilter === 'unassigned' && !p.assignedRoomId) ||
-        (statusFilter === 'assigned' && p.assignedRoomId)
       const matchesRoomPref = roomPrefFilter === 'all' || p.requestedRoomType === roomPrefFilter
-      return matchesSearch && matchesStatus && matchesRoomPref
+      return matchesSearch && matchesRoomPref
     })
-  }, [participants, searchTerm, statusFilter, roomPrefFilter])
+  }, [participants, searchTerm, roomPrefFilter])
 
   const getCardBorderLeft = (bedType: string) => {
     const norm = (bedType || '').toLowerCase()
@@ -96,53 +91,29 @@ export default function ParticipantPool() {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
-          <div className="flex flex-col space-y-1">
-            <label
-              htmlFor="status-filter-select"
-              className="text-[10px] font-bold text-slate-450 uppercase tracking-wider"
-            >
-              Status
-            </label>
-            <select
-              id="status-filter-select"
-              value={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value as 'unassigned' | 'assigned' | 'all')
-                setSelectedForQuickAssign(null)
-              }}
-              className="text-xs py-1.5 px-2 border border-slate-200 rounded-md bg-slate-55 text-slate-600 focus:outline-hidden focus:ring-1 focus:ring-indigo-500 font-medium cursor-pointer"
-            >
-              <option value="unassigned">Unassigned Only</option>
-              <option value="assigned">Assigned Only</option>
-              <option value="all">Show All Registered</option>
-            </select>
-          </div>
-
-          <div className="flex flex-col space-y-1">
-            <label
-              htmlFor="room-pref-filter-select"
-              className="text-[10px] font-bold text-slate-450 uppercase tracking-wider"
-            >
-              Preferred Room
-            </label>
-            <select
-              id="room-pref-filter-select"
-              value={roomPrefFilter}
-              onChange={(e) => {
-                setRoomPrefFilter(e.target.value)
-                setSelectedForQuickAssign(null)
-              }}
-              className="text-xs py-1.5 px-2 border border-slate-200 rounded-md bg-slate-55 text-slate-600 focus:outline-hidden focus:ring-1 focus:ring-indigo-500 font-medium cursor-pointer"
-            >
-              <option value="all">All room choices</option>
-              {roomPrefOptions.map((pref) => (
-                <option key={pref} value={pref}>
-                  {pref}
-                </option>
-              ))}
-            </select>
-          </div>
+        <div className="flex flex-col space-y-1">
+          <label
+            htmlFor="room-pref-filter-select"
+            className="text-[10px] font-bold text-slate-450 uppercase tracking-wider"
+          >
+            Preferred Room
+          </label>
+          <select
+            id="room-pref-filter-select"
+            value={roomPrefFilter}
+            onChange={(e) => {
+              setRoomPrefFilter(e.target.value)
+              setSelectedForQuickAssign(null)
+            }}
+            className="text-xs py-1.5 px-2 border border-slate-200 rounded-md bg-slate-55 text-slate-600 focus:outline-hidden focus:ring-1 focus:ring-indigo-500 font-medium cursor-pointer"
+          >
+            <option value="all">All room choices</option>
+            {roomPrefOptions.map((pref) => (
+              <option key={pref} value={pref}>
+                {pref}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 

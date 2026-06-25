@@ -57,8 +57,8 @@ export default function PrintReport() {
   }, [rooms, participants, searchQuery])
 
   return (
-    <div id="print-report-module" className="flex gap-6 items-start">
-      <div className="print:hidden sticky top-[64px] w-72 flex-shrink-0 bg-white rounded-xl shadow-xs border border-slate-200 p-5 space-y-4 h-[calc(100vh-64px)] overflow-y-auto custom-scrollbar">
+    <div id="print-report-module" className="flex flex-col lg:flex-row gap-6 h-full min-h-0">
+      <div className="print:hidden w-full lg:w-96 lg:flex-shrink-0 bg-white rounded-xl shadow-xs border border-slate-200 p-5 space-y-4 lg:h-full lg:overflow-y-auto custom-scrollbar">
         <div>
           <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2">
             <Printer className="w-4 h-4 text-indigo-600" />
@@ -164,7 +164,7 @@ export default function PrintReport() {
         </div>
       </div>
 
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 min-h-0 overflow-y-auto custom-scrollbar">
         <div
           id="printable-report-capture"
           className="bg-white text-slate-900 p-8 border border-slate-300 rounded-lg max-w-4xl mx-auto font-sans leading-normal relative shadow-xs"

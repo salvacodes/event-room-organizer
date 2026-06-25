@@ -31,12 +31,12 @@ export default function AllocationBoard() {
   const toastVariant = autoAllocateResult?.matchesCount ? 'success' : 'warning'
 
   return (
-    <div className="flex gap-6 items-start">
-      <div className="sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto w-80 flex-shrink-0 print:hidden custom-scrollbar">
+    <div className="flex gap-6 h-full min-h-0">
+      <div className="h-full overflow-y-auto w-80 flex-shrink-0 print:hidden custom-scrollbar">
         <ParticipantPool />
       </div>
 
-      <div className="flex-1 min-w-0 space-y-6">
+      <div className="flex-1 min-w-0 h-full overflow-y-auto space-y-6 pb-6">
         <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 print:hidden">
           <div className="min-w-0">
             <h2 className="text-sm font-bold text-slate-800">Drag & Drop to Allocate</h2>

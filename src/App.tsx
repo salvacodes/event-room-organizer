@@ -15,7 +15,10 @@ export default function App() {
   const unassignedCount = participants.filter((p) => !p.assignedRoomId).length
 
   return (
-    <div id="application-container" className="min-h-screen bg-[#F8FAFC] text-slate-800 flex flex-col font-sans">
+    <div
+      id="application-container"
+      className="h-screen overflow-hidden bg-[#F8FAFC] text-slate-800 flex flex-col font-sans print:h-auto print:overflow-visible"
+    >
       <header
         id="application-header"
         className="bg-slate-900 text-white border-b border-slate-950 sticky top-0 z-40 print:hidden shadow-md"
@@ -100,19 +103,19 @@ export default function App() {
         </div>
       </header>
 
-      <main id="workspace-core-view" className="flex-1 w-full print:p-0">
+      <main id="workspace-core-view" className="flex-1 min-h-0 w-full print:p-0 overflow-hidden">
         {activeTab === 'board' && (
-          <div className="px-4 sm:px-6 py-4 sm:py-6">
+          <div className="h-full flex flex-col px-4 sm:px-6 py-4 sm:py-6">
             <AllocationBoard />
           </div>
         )}
         {activeTab === 'csv' && (
-          <div className="animate-fadeIn px-4 sm:px-6 py-4 sm:py-6">
+          <div className="animate-fadeIn h-full flex flex-col px-4 sm:px-6 py-4 sm:py-6">
             <CsvImport />
           </div>
         )}
         {activeTab === 'report' && (
-          <div className="animate-fadeIn px-4 sm:px-6 py-4 sm:py-6">
+          <div className="animate-fadeIn h-full flex flex-col px-4 sm:px-6 py-4 sm:py-6">
             <PrintReport />
           </div>
         )}
