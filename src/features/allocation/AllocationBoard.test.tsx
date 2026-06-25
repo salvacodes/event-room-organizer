@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { useWorkspaceStore } from '../../store/useWorkspaceStore'
 import AllocationBoard from './AllocationBoard'
@@ -21,6 +21,8 @@ type MockState = {
   history: unknown[]
   undo: () => void
   redo: () => void
+  autoAllocateResult: { matchesCount: number } | null
+  clearAutoAllocateResult: () => void
 }
 
 function setupMock(overrides: Partial<MockState> = {}) {
@@ -38,6 +40,8 @@ function setupMock(overrides: Partial<MockState> = {}) {
     history: [{}, {}, {}],
     undo: vi.fn(),
     redo: vi.fn(),
+    autoAllocateResult: null,
+    clearAutoAllocateResult: vi.fn(),
     ...overrides
   }
   // biome-ignore lint/suspicious/noExplicitAny: test mock selector
@@ -45,7 +49,7 @@ function setupMock(overrides: Partial<MockState> = {}) {
   return state
 }
 
-describe('AllocationBoard', () => {
+describe('AllocationBoard — undo/redo buttons', () => {
   it('renders undo and redo buttons in the action bar', () => {
     setupMock()
     render(<AllocationBoard />)
@@ -91,5 +95,54 @@ describe('AllocationBoard', () => {
     render(<AllocationBoard />)
     fireEvent.click(screen.getByTitle('Redo mapping step'))
     expect(redo).toHaveBeenCalledOnce()
+  })
+})
+
+describe('AllocationBoard — Reset Board confirmation modal', () => {
+  it('shows ConfirmationModal when Reset button is clicked', () => {
+    setupMock()
+    render(<AllocationBoard />)
+    fireEvent.click(screen.getByTitle('Remove all allocations'))
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    expect(screen.getByText('Reset Board?')).toBeInTheDocument()
+  })
+
+  it('calls resetAllocations when modal confirm button is clicked', () => {
+    const resetAllocations = vi.fn()
+    setupMock({ resetAllocations })
+    render(<AllocationBoard />)
+    fireEvent.click(screen.getByTitle('Remove all allocations'))
+    fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Reset' }))
+    expect(resetAllocations).toHaveBeenCalledOnce()
+  })
+
+  it('hides modal when cancel button is clicked', () => {
+    setupMock()
+    render(<AllocationBoard />)
+    fireEvent.click(screen.getByTitle('Remove all allocations'))
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+})
+
+describe('AllocationBoard — Auto-Allocate toast', () => {
+  it('renders success toast when autoAllocateResult.matchesCount > 0', () => {
+    setupMock({ autoAllocateResult: { matchesCount: 5 } })
+    render(<AllocationBoard />)
+    expect(screen.getByText('Auto-allocation complete! 5 guests have been assigned.')).toBeInTheDocument()
+  })
+
+  it('renders warning toast when autoAllocateResult.matchesCount is 0', () => {
+    setupMock({ autoAllocateResult: { matchesCount: 0 } })
+    render(<AllocationBoard />)
+    expect(
+      screen.getByText('No matches found. No vacant beds match any unassigned guest preferences.')
+    ).toBeInTheDocument()
+  })
+
+  it('does not render toast when autoAllocateResult is null', () => {
+    setupMock({ autoAllocateResult: null })
+    render(<AllocationBoard />)
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
   })
 })

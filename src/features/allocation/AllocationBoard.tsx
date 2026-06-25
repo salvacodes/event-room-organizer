@@ -1,4 +1,7 @@
 import { RotateCcw, RotateCw, Sparkles, XCircle } from 'lucide-react'
+import { useState } from 'react'
+import ConfirmationModal from '../../shared/components/ConfirmationModal'
+import ToastNotification from '../../shared/components/ToastNotification'
 import { useWorkspaceStore } from '../../store/useWorkspaceStore'
 import ParticipantPool from './ParticipantPool'
 import RoomCard from './RoomCard'
@@ -13,6 +16,19 @@ export default function AllocationBoard() {
   const historyLength = useWorkspaceStore((s) => s.history.length)
   const undo = useWorkspaceStore((s) => s.undo)
   const redo = useWorkspaceStore((s) => s.redo)
+  const autoAllocateResult = useWorkspaceStore((s) => s.autoAllocateResult)
+  const clearAutoAllocateResult = useWorkspaceStore((s) => s.clearAutoAllocateResult)
+
+  const [showResetModal, setShowResetModal] = useState(false)
+
+  const toastMessage =
+    autoAllocateResult === null
+      ? null
+      : autoAllocateResult.matchesCount > 0
+        ? `Auto-allocation complete! ${autoAllocateResult.matchesCount} guests have been assigned.`
+        : 'No matches found. No vacant beds match any unassigned guest preferences.'
+
+  const toastVariant = autoAllocateResult?.matchesCount ? 'success' : 'warning'
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
@@ -66,7 +82,7 @@ export default function AllocationBoard() {
             <button
               type="button"
               id="header-clear-all-btn"
-              onClick={resetAllocations}
+              onClick={() => setShowResetModal(true)}
               className="px-3.5 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-lg border border-rose-150 transition-all flex items-center gap-1.5 cursor-pointer"
               title="Remove all allocations"
             >
@@ -119,6 +135,24 @@ export default function AllocationBoard() {
           </div>
         )}
       </div>
+
+      {showResetModal && (
+        <ConfirmationModal
+          title="Reset Board?"
+          message="All current bed assignments will be cleared. Participant details will remain, but everyone will return to the unassigned list."
+          confirmLabel="Reset"
+          confirmVariant="danger"
+          onConfirm={() => {
+            resetAllocations()
+            setShowResetModal(false)
+          }}
+          onCancel={() => setShowResetModal(false)}
+        />
+      )}
+
+      {toastMessage && (
+        <ToastNotification message={toastMessage} variant={toastVariant} onDismiss={clearAutoAllocateResult} />
+      )}
     </div>
   )
 }

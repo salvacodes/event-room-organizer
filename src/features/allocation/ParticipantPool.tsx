@@ -80,20 +80,6 @@ export default function ParticipantPool() {
             <Users className="w-5 h-5 text-indigo-500" />
             Guests Registry Pool
           </h3>
-          <p className="text-xs text-slate-400 mt-0.5 font-medium leading-none">
-            {participants.filter((p) => !p.assignedRoomId).length} unassigned / {participants.length} total signups
-          </p>
-        </div>
-
-        <div className="w-full sm:w-auto bg-slate-100 px-3 py-1.5 rounded-lg flex items-center gap-3 text-xs font-semibold text-slate-600">
-          <div className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 inline-block"></span>
-            Total Beds: {rooms.reduce((sum, r) => sum + r.beds.length, 0)}
-          </div>
-          <div className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
-            Occupied: {participants.filter((p) => p.assignedRoomId).length}
-          </div>
         </div>
       </div>
 

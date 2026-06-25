@@ -12,6 +12,7 @@ interface WorkspaceStore {
   historyIndex: number
   draggedParticipant: Participant | null
   assignError: string | null
+  autoAllocateResult: { matchesCount: number } | null
   activeTab: ActiveTab
 
   loadData: (rooms: Room[], participants: Participant[]) => void
@@ -23,6 +24,7 @@ interface WorkspaceStore {
   redo: () => void
   setDraggedParticipant: (participant: Participant | null) => void
   clearAssignError: () => void
+  clearAutoAllocateResult: () => void
   setActiveTab: (tab: ActiveTab) => void
 }
 
@@ -97,6 +99,7 @@ export const useWorkspaceStore = create<WorkspaceStore>()((set, get) => {
     ...loadInitialState(),
     draggedParticipant: null,
     assignError: null,
+    autoAllocateResult: null,
     activeTab: 'board' as ActiveTab,
 
     loadData: (rooms, participants) => {
@@ -171,11 +174,6 @@ export const useWorkspaceStore = create<WorkspaceStore>()((set, get) => {
     },
 
     resetAllocations: () => {
-      const confirmed = window.confirm(
-        'Are you sure you want to clear all current bed assignments? Participants details will remain, but everyone will return to the unassigned list.'
-      )
-      if (!confirmed) return
-
       const { rooms, participants } = get()
       const clearedRooms = rooms.map((r) => ({
         ...r,
@@ -217,14 +215,8 @@ export const useWorkspaceStore = create<WorkspaceStore>()((set, get) => {
 
       if (matchesCount > 0) {
         commitWorkspaceState(updatedRooms, updatedParticipants)
-        window.alert(
-          `Auto-allocation complete! Automatically assigned ${matchesCount} unassigned guests matching their exact requested room type and bed configuration.`
-        )
-      } else {
-        window.alert(
-          'No additional unassigned participants could be auto-allocated. There are either no vacant beds remaining, or the available empty slots do not match any unassigned guest preferences!'
-        )
       }
+      set({ autoAllocateResult: { matchesCount } })
     },
 
     undo: () => {
@@ -249,6 +241,7 @@ export const useWorkspaceStore = create<WorkspaceStore>()((set, get) => {
 
     setDraggedParticipant: (participant) => set({ draggedParticipant: participant }),
     clearAssignError: () => set({ assignError: null }),
+    clearAutoAllocateResult: () => set({ autoAllocateResult: null }),
     setActiveTab: (tab) => set({ activeTab: tab })
   }
 })
