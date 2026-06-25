@@ -58,7 +58,7 @@ export default function PrintReport() {
 
   return (
     <div id="print-report-module" className="flex gap-6 items-start">
-      <div className="print:hidden sticky top-[129px] w-72 flex-shrink-0 bg-white rounded-xl shadow-xs border border-slate-200 p-5 space-y-4 h-[calc(100vh-129px)] overflow-y-auto custom-scrollbar">
+      <div className="print:hidden sticky top-[64px] w-72 flex-shrink-0 bg-white rounded-xl shadow-xs border border-slate-200 p-5 space-y-4 h-[calc(100vh-64px)] overflow-y-auto custom-scrollbar">
         <div>
           <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2">
             <Printer className="w-4 h-4 text-indigo-600" />

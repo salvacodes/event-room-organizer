@@ -13,14 +13,10 @@ const defaultProps = {
 }
 
 describe('ConfirmationModal', () => {
-  it('renders the title and message', () => {
+  it('renders the title, message and confirm button', () => {
     render(<ConfirmationModal {...defaultProps} />)
     expect(screen.getByText('Reset Board?')).toBeInTheDocument()
     expect(screen.getByText('All bed assignments will be cleared.')).toBeInTheDocument()
-  })
-
-  it('renders the confirm button with the given label', () => {
-    render(<ConfirmationModal {...defaultProps} />)
     expect(screen.getByRole('button', { name: 'Reset' })).toBeInTheDocument()
   })
 

@@ -32,7 +32,7 @@ export default function AllocationBoard() {
 
   return (
     <div className="flex gap-6 items-start">
-      <div className="sticky top-[129px] h-[calc(100vh-129px)] overflow-y-auto w-80 flex-shrink-0 print:hidden custom-scrollbar">
+      <div className="sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto w-80 flex-shrink-0 print:hidden custom-scrollbar">
         <ParticipantPool />
       </div>
 
