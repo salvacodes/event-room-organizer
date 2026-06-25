@@ -1,6 +1,7 @@
 import { Search, UserPlus, Users } from 'lucide-react'
 import type React from 'react'
 import { useMemo, useState } from 'react'
+import { getBedTypeLabel } from '../../shared/bedTypes'
 import type { Participant } from '../../shared/types'
 import { useWorkspaceStore } from '../../store/useWorkspaceStore'
 
@@ -163,7 +164,7 @@ export default function ParticipantPool() {
                   )}
                   {participant.requestedBedType && (
                     <span className="bg-teal-50/70 text-teal-800 border border-teal-200/50 text-[10px] font-semibold px-2 py-0.5 rounded-full">
-                      🛏️ {participant.requestedBedType}
+                      🛏️ {getBedTypeLabel(participant.requestedBedType)}
                     </span>
                   )}
                 </div>
@@ -205,7 +206,7 @@ export default function ParticipantPool() {
                             return (
                               targetRoom.category.trim().toLowerCase() ===
                                 participant.requestedRoomType.trim().toLowerCase() &&
-                              bed.bedType.trim().toLowerCase() === participant.requestedBedType.trim().toLowerCase()
+                              bed.bedType === participant.requestedBedType
                             )
                           })
 
@@ -216,7 +217,7 @@ export default function ParticipantPool() {
                                 <div className="mt-1 text-slate-600 font-medium">
                                   🏨 Category {participant.requestedRoomType}
                                   <br />
-                                  🛏️ Configuration {participant.requestedBedType}
+                                  🛏️ Configuration {getBedTypeLabel(participant.requestedBedType)}
                                 </div>
                               </div>
                             )

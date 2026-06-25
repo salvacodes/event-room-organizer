@@ -1,6 +1,7 @@
 import { AlertTriangle, CheckCircle, HelpCircle, RefreshCw, Upload } from 'lucide-react'
 import type React from 'react'
 import { useState } from 'react'
+import type { BedType } from '../../shared/bedTypes'
 import type { Participant, Room } from '../../shared/types'
 import { useWorkspaceStore } from '../../store/useWorkspaceStore'
 import { parseBedConfiguration, parseCSV } from './csvParser'
@@ -98,7 +99,7 @@ export default function CsvImport() {
           id: `p-${i}-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
           name,
           requestedRoomType: idxReqRoom !== -1 ? row[idxReqRoom] || 'Standard' : 'Standard',
-          requestedBedType: idxReqBed !== -1 ? row[idxReqBed] || 'Any' : 'Any',
+          requestedBedType: (idxReqBed !== -1 ? row[idxReqBed] || 'single' : 'single') as BedType,
           sharingPreferences: idxSharing !== -1 ? row[idxSharing] || '' : '',
           assignedRoomId: null,
           assignedBedId: null
@@ -194,14 +195,13 @@ export default function CsvImport() {
             <span className="font-semibold text-slate-700">Room Bed Configuration Rules:</span>
             <ul className="list-disc pl-4 mt-1 space-y-0.5">
               <li>
-                <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">single bed</code> (Single/Bunk, cap=1)
+                <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">single</code> (Single/Bunk, cap=1)
               </li>
               <li>
-                <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">double bed (single occupancy)</code>{' '}
-                (solo use, cap=1)
+                <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">double_single</code> (solo use, cap=1)
               </li>
               <li>
-                <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">double bed (shared)</code> (2 slots)
+                <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">double_shared</code> (2 slots)
               </li>
             </ul>
           </div>
@@ -237,7 +237,7 @@ export default function CsvImport() {
               id="raw-rooms-csv-editor"
               value={roomsCsv}
               onChange={(e) => setRoomsCsv(e.target.value)}
-              placeholder='Room,Type,Beds&#10;101 - Pine Cabin,Standard,"1 double bed (single occupancy), 1 single bed"'
+              placeholder="Room,Type,Beds&#10;101 - Pine Cabin,Standard,1 double_single 1 single"
               className="w-full h-full font-mono text-xs p-3 bg-slate-900 text-slate-200 rounded-lg border border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden leading-relaxed custom-scrollbar resize-none"
             />
             <div className="absolute top-2 right-2 flex items-center text-slate-500 bg-slate-900/60 px-2 py-0.5 rounded text-[10px] font-semibold select-none pointer-events-none">
@@ -274,7 +274,7 @@ export default function CsvImport() {
               id="raw-registrants-csv-editor"
               value={guestsCsv}
               onChange={(e) => setGuestsCsv(e.target.value)}
-              placeholder='Name,Room,Bed,Notes&#10;"David Miller",Standard,single bed,"Agreed to share with Harry"'
+              placeholder='Name,Room,Bed,Notes&#10;"David Miller",Standard,single,"Agreed to share with Harry"'
               className="w-full h-full font-mono text-xs p-3 bg-slate-900 text-slate-200 rounded-lg border border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden leading-relaxed custom-scrollbar resize-none"
             />
             <div className="absolute top-2 right-2 flex items-center text-slate-500 bg-slate-900/60 px-2 py-0.5 rounded text-[10px] font-semibold select-none pointer-events-none">

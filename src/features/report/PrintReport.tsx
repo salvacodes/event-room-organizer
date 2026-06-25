@@ -1,5 +1,6 @@
 import { Printer, Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { getBedTypeLabel } from '../../shared/bedTypes'
 import { useWorkspaceStore } from '../../store/useWorkspaceStore'
 
 export default function PrintReport() {
@@ -226,7 +227,9 @@ export default function PrintReport() {
                               key={bed.id}
                               className="flex items-center justify-between py-1.5 border-b border-slate-100 last:border-b-0 text-[11px] leading-tight"
                             >
-                              <span className="font-mono text-slate-500 font-bold">{bed.label || bed.type}:</span>
+                              <span className="font-mono text-slate-500 font-bold">
+                                {bed.label || getBedTypeLabel(bed.type)}:
+                              </span>
                               <span
                                 className={`text-right font-bold ${guest ? 'text-slate-900' : 'text-slate-400 italic'}`}
                               >

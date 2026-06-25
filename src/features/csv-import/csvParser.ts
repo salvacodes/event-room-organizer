@@ -1,4 +1,12 @@
+import type { BedType } from '../../shared/bedTypes'
+import { getBedTypeLabel } from '../../shared/bedTypes'
 import type { Bed } from '../../shared/types'
+
+const VALID_BED_TYPES: ReadonlySet<string> = new Set<BedType>(['single', 'double_single', 'double_shared'])
+
+function isBedType(value: string): value is BedType {
+  return VALID_BED_TYPES.has(value)
+}
 
 export function parseCSV(text: string): string[][] {
   const lines: string[][] = []
@@ -48,65 +56,36 @@ export function parseCSV(text: string): string[][] {
 export function parseBedConfiguration(configStr: string, roomId: string): Bed[] {
   if (!configStr) return []
   const beds: Bed[] = []
-  const elements = configStr.split(/[,;]/)
   let bedIndex = 0
 
-  for (const element of elements) {
-    const trimmed = element.trim()
-    if (!trimmed) continue
+  const pairs = [...configStr.matchAll(/(\d+)\s+(\w+)/g)]
 
-    const match = trimmed.match(/^(\d+)\s+(.+)$/)
-    let count = 1
-    let bedDescription = trimmed
-    if (match) {
-      count = parseInt(match[1], 10)
-      bedDescription = match[2].trim()
+  for (const [, countStr, key] of pairs) {
+    if (!isBedType(key)) {
+      throw new Error(`Unknown bed type: "${key}". Valid types are: single, double_single, double_shared`)
     }
+    const count = parseInt(countStr, 10)
 
-    const norm = bedDescription.toLowerCase()
-
-    if (
-      norm.includes('single occupancy') ||
-      norm.includes('for single') ||
-      norm.includes('double occupancy single') ||
-      norm.includes('(single occupancy)')
-    ) {
-      for (let i = 0; i < count; i++) {
-        beds.push({
-          id: `${roomId}-bed-${bedIndex++}`,
-          type: 'double bed (single occupancy)',
-          label: 'Double Bed (Single Occupancy)',
-          assignedParticipantId: null
-        })
-      }
-    } else if (
-      norm.includes('shared') ||
-      norm.includes('2 people') ||
-      norm.includes('for 2') ||
-      norm.includes('shared for 2 people') ||
-      norm.includes('(shared)')
-    ) {
-      for (let i = 0; i < count; i++) {
+    for (let i = 0; i < count; i++) {
+      if (key === 'double_shared') {
         const uniqueBedId = bedIndex++
         beds.push({
           id: `${roomId}-bed-${uniqueBedId}-spot1`,
-          type: 'double bed (shared)',
-          label: 'Double Bed (Shared) - Slot A',
+          type: 'double_shared',
+          label: `${getBedTypeLabel('double_shared')} - Slot A`,
           assignedParticipantId: null
         })
         beds.push({
           id: `${roomId}-bed-${uniqueBedId}-spot2`,
-          type: 'double bed (shared)',
-          label: 'Double Bed (Shared) - Slot B',
+          type: 'double_shared',
+          label: `${getBedTypeLabel('double_shared')} - Slot B`,
           assignedParticipantId: null
         })
-      }
-    } else {
-      for (let i = 0; i < count; i++) {
+      } else {
         beds.push({
           id: `${roomId}-bed-${bedIndex++}`,
-          type: 'single bed',
-          label: 'Single Bed',
+          type: key,
+          label: getBedTypeLabel(key),
           assignedParticipantId: null
         })
       }

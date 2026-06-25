@@ -46,16 +46,16 @@ describe('autoAllocate', () => {
 
   describe('when there are matches', () => {
     it('sets autoAllocateResult.matchesCount when guests are assigned', () => {
-      const rooms = [makeRoom('Room A', 'Standard', ['single bed'])]
-      const participants = [makeParticipant('p1', 'Standard', 'single bed')]
+      const rooms = [makeRoom('Room A', 'Standard', ['single'])]
+      const participants = [makeParticipant('p1', 'Standard', 'single')]
       resetStore(rooms, participants)
       useWorkspaceStore.getState().autoAllocate()
       expect(useWorkspaceStore.getState().autoAllocateResult).toEqual({ matchesCount: 1 })
     })
 
     it('increments history when guests are assigned', () => {
-      const rooms = [makeRoom('Room A', 'Standard', ['single bed'])]
-      const participants = [makeParticipant('p1', 'Standard', 'single bed')]
+      const rooms = [makeRoom('Room A', 'Standard', ['single'])]
+      const participants = [makeParticipant('p1', 'Standard', 'single')]
       resetStore(rooms, participants)
       useWorkspaceStore.getState().autoAllocate()
       expect(useWorkspaceStore.getState().historyIndex).toBe(1)
@@ -65,16 +65,16 @@ describe('autoAllocate', () => {
 
   describe('when there are no matches', () => {
     it('sets autoAllocateResult.matchesCount to 0 when no guests match', () => {
-      const rooms = [makeRoom('Room A', 'Standard', ['single bed'])]
-      const participants = [makeParticipant('p1', 'Deluxe', 'double bed (shared)')]
+      const rooms = [makeRoom('Room A', 'Standard', ['single'])]
+      const participants = [makeParticipant('p1', 'Deluxe', 'double_shared')]
       resetStore(rooms, participants)
       useWorkspaceStore.getState().autoAllocate()
       expect(useWorkspaceStore.getState().autoAllocateResult).toEqual({ matchesCount: 0 })
     })
 
     it('does not modify history when no guests match', () => {
-      const rooms = [makeRoom('Room A', 'Standard', ['single bed'])]
-      const participants = [makeParticipant('p1', 'Deluxe', 'double bed (shared)')]
+      const rooms = [makeRoom('Room A', 'Standard', ['single'])]
+      const participants = [makeParticipant('p1', 'Deluxe', 'double_shared')]
       resetStore(rooms, participants)
       useWorkspaceStore.getState().autoAllocate()
       expect(useWorkspaceStore.getState().historyIndex).toBe(0)
@@ -84,8 +84,8 @@ describe('autoAllocate', () => {
 
   describe('clearAutoAllocateResult', () => {
     it('sets autoAllocateResult to null', () => {
-      const rooms = [makeRoom('Room A', 'Standard', ['single bed'])]
-      const participants = [makeParticipant('p1', 'Standard', 'single bed')]
+      const rooms = [makeRoom('Room A', 'Standard', ['single'])]
+      const participants = [makeParticipant('p1', 'Standard', 'single')]
       resetStore(rooms, participants)
       useWorkspaceStore.getState().autoAllocate()
       useWorkspaceStore.getState().clearAutoAllocateResult()
@@ -123,8 +123,8 @@ describe('resetAllocations', () => {
   })
 
   it('clears all bed assignments and commits to history', () => {
-    const rooms = [makeRoom('Room A', 'Standard', ['single bed'])]
-    const participants = [makeParticipant('p1', 'Standard', 'single bed')]
+    const rooms = [makeRoom('Room A', 'Standard', ['single'])]
+    const participants = [makeParticipant('p1', 'Standard', 'single')]
     rooms[0].beds[0].assignedParticipantId = 'p1'
     participants[0].assignedRoomId = 'Room A'
     participants[0].assignedBedId = rooms[0].beds[0].id

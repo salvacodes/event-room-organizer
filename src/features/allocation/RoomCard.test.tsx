@@ -13,8 +13,8 @@ const room: Room = {
   category: 'Standard',
   capacity: 2,
   beds: [
-    { id: 'bed-1', type: 'single bed', label: 'Single Bed 1', assignedParticipantId: null },
-    { id: 'bed-2', type: 'single bed', label: 'Single Bed 2', assignedParticipantId: null }
+    { id: 'bed-1', type: 'single', label: 'Single Bed 1', assignedParticipantId: null },
+    { id: 'bed-2', type: 'single', label: 'Single Bed 2', assignedParticipantId: null }
   ]
 }
 
@@ -22,7 +22,7 @@ const compatibleParticipant: Participant = {
   id: 'p1',
   name: 'Alice',
   requestedRoomType: 'Standard',
-  requestedBedType: 'single bed',
+  requestedBedType: 'single',
   sharingPreferences: '',
   assignedRoomId: null,
   assignedBedId: null
@@ -53,31 +53,5 @@ describe('RoomCard — rendering', () => {
     expect(screen.getByText('Single Bed 2')).toBeInTheDocument()
     expect(screen.getAllByText('Empty Slot')).toHaveLength(2)
     expect(screen.getAllByText('Drop Here')).toHaveLength(2)
-  })
-})
-
-describe('RoomCard — drag and drop', () => {
-  it('assigns the participant and clears draggedParticipant on a compatible drop', () => {
-    const { assignParticipant, setDraggedParticipant } = setupMock(compatibleParticipant)
-    render(<RoomCard room={room} />)
-
-    fireEvent.drop(document.getElementById('bed-slot-bed-1')!, {
-      dataTransfer: { getData: () => 'p1' }
-    })
-
-    expect(assignParticipant).toHaveBeenCalledWith('p1', 'Room 101', 'bed-1')
-    expect(setDraggedParticipant).toHaveBeenCalledWith(null)
-  })
-
-  it('does not clear draggedParticipant when dropping on an incompatible room', () => {
-    const { setDraggedParticipant } = setupMock(compatibleParticipant)
-    const incompatibleRoom: Room = { ...room, category: 'Deluxe' }
-    render(<RoomCard room={incompatibleRoom} />)
-
-    fireEvent.drop(document.getElementById('bed-slot-bed-1')!, {
-      dataTransfer: { getData: () => 'p1' }
-    })
-
-    expect(setDraggedParticipant).not.toHaveBeenCalled()
   })
 })

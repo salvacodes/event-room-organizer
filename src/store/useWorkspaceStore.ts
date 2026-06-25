@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { parseBedConfiguration, parseCSV } from '../features/csv-import/csvParser'
 import { SAMPLE_EXACT_REGISTRATION_CSV, SAMPLE_EXACT_ROOMS_CSV } from '../features/csv-import/sampleData'
+import type { BedType } from '../shared/bedTypes'
+import { getBedTypeLabel } from '../shared/bedTypes'
 import type { HistoryState, Participant, Room } from '../shared/types'
 
 type ActiveTab = 'board' | 'csv' | 'report'
@@ -54,7 +56,7 @@ function buildDefaultDataset(): { rooms: Room[]; participants: Participant[] } {
       id: `p-default-${i}`,
       name: row[0],
       requestedRoomType: row[1] || 'Type A',
-      requestedBedType: row[2] || 'single bed',
+      requestedBedType: (row[2] as BedType) || 'single',
       sharingPreferences: row[3] || '',
       assignedRoomId: null,
       assignedBedId: null
@@ -122,13 +124,13 @@ export const useWorkspaceStore = create<WorkspaceStore>()((set, get) => {
       const bed = room.beds.find((b) => b.id === bedId)
       if (!bed) return
 
-      const norm = (s: string) => (s || '').trim().toLowerCase()
+      const normStr = (s: string) => (s || '').trim().toLowerCase()
       if (
-        norm(participant.requestedRoomType) !== norm(room.category) ||
-        norm(participant.requestedBedType) !== norm(bed.type)
+        normStr(participant.requestedRoomType) !== normStr(room.category) ||
+        participant.requestedBedType !== bed.type
       ) {
         set({
-          assignError: `Assignment Blocked: "${participant.name}" requested Room Category [${participant.requestedRoomType}] and Bed Config [${participant.requestedBedType}]. You attempted to place them in a Room of Category [${room.category}] and Bed Config [${bed.label || bed.type}].`
+          assignError: `Assignment Blocked: "${participant.name}" requested Room Category [${participant.requestedRoomType}] and Bed Config [${getBedTypeLabel(participant.requestedBedType)}]. You attempted to place them in a Room of Category [${room.category}] and Bed Config [${bed.label || getBedTypeLabel(bed.type)}].`
         })
         return
       }
@@ -203,7 +205,7 @@ export const useWorkspaceStore = create<WorkspaceStore>()((set, get) => {
 
           for (const bed of room.beds) {
             if (bed.assignedParticipantId) continue
-            if (bed.type.trim().toLowerCase() !== participant.requestedBedType.trim().toLowerCase()) continue
+            if (bed.type !== participant.requestedBedType) continue
 
             bed.assignedParticipantId = participant.id
             participant.assignedRoomId = room.id
