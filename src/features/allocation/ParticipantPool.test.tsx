@@ -27,7 +27,7 @@ const assigned = {
   assignedBedId: 'bed-1'
 }
 
-function setupMock(participants = [unassigned, assigned]) {
+function setupMock(participants = [unassigned, assigned], roomTypeFilter = 'all') {
   // biome-ignore lint/suspicious/noExplicitAny: test mock selector
   vi.mocked(useWorkspaceStore).mockImplementation((selector: (s: any) => unknown) =>
     selector({
@@ -35,10 +35,20 @@ function setupMock(participants = [unassigned, assigned]) {
       rooms: [],
       assignParticipant: vi.fn(),
       removeAssignment: vi.fn(),
-      setDraggedParticipant: vi.fn()
+      setDraggedParticipant: vi.fn(),
+      roomTypeFilter,
+      setRoomTypeFilter: vi.fn()
     })
   )
 }
+
+describe('ParticipantPool — room type filter label', () => {
+  it('labels the filter "Room Type"', () => {
+    setupMock()
+    render(<ParticipantPool />)
+    expect(screen.getByLabelText('Room Type')).toBeInTheDocument()
+  })
+})
 
 describe('ParticipantPool — unassigned-only visibility', () => {
   it('renders unassigned participants', () => {

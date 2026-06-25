@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
+import type { Bed } from '../../shared/types'
 import { useWorkspaceStore } from '../../store/useWorkspaceStore'
 import AllocationBoard from './AllocationBoard'
 
@@ -8,7 +9,7 @@ vi.mock('../../store/useWorkspaceStore', () => ({
 }))
 
 type MockState = {
-  rooms: []
+  rooms: { id: string; category: string; beds: Bed[]; capacity: number }[]
   participants: []
   assignError: string | null
   autoAllocate: () => void
@@ -23,6 +24,8 @@ type MockState = {
   redo: () => void
   autoAllocateResult: { matchesCount: number } | null
   clearAutoAllocateResult: () => void
+  roomTypeFilter: string
+  setRoomTypeFilter: () => void
 }
 
 function setupMock(overrides: Partial<MockState> = {}) {
@@ -42,6 +45,8 @@ function setupMock(overrides: Partial<MockState> = {}) {
     redo: vi.fn(),
     autoAllocateResult: null,
     clearAutoAllocateResult: vi.fn(),
+    roomTypeFilter: 'all',
+    setRoomTypeFilter: vi.fn(),
     ...overrides
   }
   // biome-ignore lint/suspicious/noExplicitAny: test mock selector
@@ -122,6 +127,25 @@ describe('AllocationBoard — Reset Board confirmation modal', () => {
     fireEvent.click(screen.getByTitle('Remove all allocations'))
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+})
+
+describe('AllocationBoard — room type filter', () => {
+  const standardRoom = { id: 'Room 101', category: 'Standard', beds: [] as Bed[], capacity: 0 }
+  const deluxeRoom = { id: 'Room 201', category: 'Deluxe', beds: [] as Bed[], capacity: 0 }
+
+  it('renders all rooms when filter is "all"', () => {
+    setupMock({ rooms: [standardRoom, deluxeRoom], roomTypeFilter: 'all' })
+    render(<AllocationBoard />)
+    expect(screen.getByText('Room 101')).toBeInTheDocument()
+    expect(screen.getByText('Room 201')).toBeInTheDocument()
+  })
+
+  it('renders only matching rooms when a type is selected', () => {
+    setupMock({ rooms: [standardRoom, deluxeRoom], roomTypeFilter: 'Standard' })
+    render(<AllocationBoard />)
+    expect(screen.getByText('Room 101')).toBeInTheDocument()
+    expect(screen.queryByText('Room 201')).not.toBeInTheDocument()
   })
 })
 

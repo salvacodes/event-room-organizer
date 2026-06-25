@@ -94,6 +94,29 @@ describe('autoAllocate', () => {
   })
 })
 
+describe('roomTypeFilter', () => {
+  beforeEach(() => {
+    localStorage.clear()
+  })
+
+  it('defaults to "all"', () => {
+    useWorkspaceStore.setState({ roomTypeFilter: 'all' })
+    expect(useWorkspaceStore.getState().roomTypeFilter).toBe('all')
+  })
+
+  it('setRoomTypeFilter updates the filter value', () => {
+    useWorkspaceStore.setState({ roomTypeFilter: 'all' })
+    useWorkspaceStore.getState().setRoomTypeFilter('Standard')
+    expect(useWorkspaceStore.getState().roomTypeFilter).toBe('Standard')
+  })
+
+  it('setRoomTypeFilter resets back to "all"', () => {
+    useWorkspaceStore.setState({ roomTypeFilter: 'Standard' })
+    useWorkspaceStore.getState().setRoomTypeFilter('all')
+    expect(useWorkspaceStore.getState().roomTypeFilter).toBe('all')
+  })
+})
+
 describe('resetAllocations', () => {
   beforeEach(() => {
     localStorage.clear()

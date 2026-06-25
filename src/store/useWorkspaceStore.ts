@@ -14,6 +14,7 @@ interface WorkspaceStore {
   assignError: string | null
   autoAllocateResult: { matchesCount: number } | null
   activeTab: ActiveTab
+  roomTypeFilter: string
 
   loadData: (rooms: Room[], participants: Participant[]) => void
   assignParticipant: (participantId: string, roomId: string, bedId: string) => void
@@ -26,6 +27,7 @@ interface WorkspaceStore {
   clearAssignError: () => void
   clearAutoAllocateResult: () => void
   setActiveTab: (tab: ActiveTab) => void
+  setRoomTypeFilter: (filter: string) => void
 }
 
 const ROOMS_KEY = 'event_room_organizer_rooms_v1'
@@ -101,6 +103,7 @@ export const useWorkspaceStore = create<WorkspaceStore>()((set, get) => {
     assignError: null,
     autoAllocateResult: null,
     activeTab: 'board' as ActiveTab,
+    roomTypeFilter: 'all',
 
     loadData: (rooms, participants) => {
       commitWorkspaceState(rooms, participants)
@@ -242,6 +245,7 @@ export const useWorkspaceStore = create<WorkspaceStore>()((set, get) => {
     setDraggedParticipant: (participant) => set({ draggedParticipant: participant }),
     clearAssignError: () => set({ assignError: null }),
     clearAutoAllocateResult: () => set({ autoAllocateResult: null }),
-    setActiveTab: (tab) => set({ activeTab: tab })
+    setActiveTab: (tab) => set({ activeTab: tab }),
+    setRoomTypeFilter: (filter) => set({ roomTypeFilter: filter })
   }
 })

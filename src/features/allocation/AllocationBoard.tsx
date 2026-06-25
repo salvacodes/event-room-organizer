@@ -7,7 +7,9 @@ import ParticipantPool from './ParticipantPool'
 import RoomCard from './RoomCard'
 
 export default function AllocationBoard() {
-  const rooms = useWorkspaceStore((s) => s.rooms)
+  const allRooms = useWorkspaceStore((s) => s.rooms)
+  const roomTypeFilter = useWorkspaceStore((s) => s.roomTypeFilter)
+  const rooms = roomTypeFilter === 'all' ? allRooms : allRooms.filter((r) => r.category === roomTypeFilter)
   const assignError = useWorkspaceStore((s) => s.assignError)
   const autoAllocate = useWorkspaceStore((s) => s.autoAllocate)
   const resetAllocations = useWorkspaceStore((s) => s.resetAllocations)

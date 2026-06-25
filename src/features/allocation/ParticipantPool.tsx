@@ -9,9 +9,10 @@ export default function ParticipantPool() {
   const rooms = useWorkspaceStore((s) => s.rooms)
   const assignParticipant = useWorkspaceStore((s) => s.assignParticipant)
   const setDraggedParticipant = useWorkspaceStore((s) => s.setDraggedParticipant)
+  const roomTypeFilter = useWorkspaceStore((s) => s.roomTypeFilter)
+  const setRoomTypeFilter = useWorkspaceStore((s) => s.setRoomTypeFilter)
 
   const [searchTerm, setSearchTerm] = useState('')
-  const [roomPrefFilter, setRoomPrefFilter] = useState('all')
   const [selectedForQuickAssign, setSelectedForQuickAssign] = useState<string | null>(null)
 
   const roomPrefOptions = useMemo(() => {
@@ -42,10 +43,10 @@ export default function ParticipantPool() {
         p.name.toLowerCase().includes(term) ||
         p.sharingPreferences.toLowerCase().includes(term) ||
         p.requestedRoomType?.toLowerCase().includes(term)
-      const matchesRoomPref = roomPrefFilter === 'all' || p.requestedRoomType === roomPrefFilter
+      const matchesRoomPref = roomTypeFilter === 'all' || p.requestedRoomType === roomTypeFilter
       return matchesSearch && matchesRoomPref
     })
-  }, [participants, searchTerm, roomPrefFilter])
+  }, [participants, searchTerm, roomTypeFilter])
 
   const getCardBorderLeft = (bedType: string) => {
     const norm = (bedType || '').toLowerCase()
@@ -93,21 +94,21 @@ export default function ParticipantPool() {
 
         <div className="flex flex-col space-y-1">
           <label
-            htmlFor="room-pref-filter-select"
+            htmlFor="room-type-filter-select"
             className="text-[10px] font-bold text-slate-450 uppercase tracking-wider"
           >
-            Preferred Room
+            Room Type
           </label>
           <select
-            id="room-pref-filter-select"
-            value={roomPrefFilter}
+            id="room-type-filter-select"
+            value={roomTypeFilter}
             onChange={(e) => {
-              setRoomPrefFilter(e.target.value)
+              setRoomTypeFilter(e.target.value)
               setSelectedForQuickAssign(null)
             }}
             className="text-xs py-1.5 px-2 border border-slate-200 rounded-md bg-slate-55 text-slate-600 focus:outline-hidden focus:ring-1 focus:ring-indigo-500 font-medium cursor-pointer"
           >
-            <option value="all">All room choices</option>
+            <option value="all">All room types</option>
             {roomPrefOptions.map((pref) => (
               <option key={pref} value={pref}>
                 {pref}
@@ -125,7 +126,7 @@ export default function ParticipantPool() {
             </div>
             <p className="text-xs font-semibold text-slate-600">No matching guests found</p>
             <p className="text-[11px] text-slate-400 mt-1 max-w-[200px]">
-              {searchTerm || roomPrefFilter !== 'all'
+              {searchTerm || roomTypeFilter !== 'all'
                 ? 'Try clearing filters or search queries above.'
                 : 'All guests have already been assigned to rooms!'}
             </p>
