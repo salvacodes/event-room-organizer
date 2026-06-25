@@ -1,19 +1,27 @@
 export const SAMPLE_EXACT_ROOMS_CSV = `Room,Type,Beds
-A101 - Standard Solo,Type A,1 double bed (single occupancy)
-A102 - Standard Solo,Type A,1 double bed (single occupancy)
-A103 - Standard Solo,Type A,1 double bed (single occupancy)
-A104 - Standard Solo,Type A,1 double bed (single occupancy)
-A105 - Standard Solo,Type A,1 double bed (single occupancy)
-B101 - Standard Duo,Type B,1 double bed (shared)
-B102 - Standard Duo,Type B,1 double bed (shared)
-B103 - Standard Duo,Type B,1 double bed (shared)
-C101 - Master Suite,Type C,"1 double bed (single occupancy), 1 single bed"
-C102 - Master Suite,Type C,"1 double bed (single occupancy), 1 single bed"
-C103 - Master Suite,Type C,"1 double bed (single occupancy), 1 single bed"
-C104 - Master Suite,Type C,"1 double bed (single occupancy), 1 single bed"
-C105 - Master Suite,Type C,"1 double bed (single occupancy), 1 single bed"
-C106 - Master Suite,Type C,"1 double bed (single occupancy), 1 single bed"
-C107 - Master Suite,Type C,"1 double bed (single occupancy), 1 single bed"`
+301,2A,"1 double bed (shared)"
+302,1A,"1 double bed (single occupancy)"
+303,1A,"1 double bed (single occupancy)"
+304,1A,"1 double bed (single occupancy)"
+305,3A,"1 double bed (single occupancy), 2 single bed"
+306,3A,"1 double bed (single occupancy), 2 single bed"
+307,3A,"1 double bed (single occupancy), 2 single bed"
+308,2B,"1 double bed (single occupancy), 1 single bed"
+401,2B,"1 double bed (single occupancy), 1 single bed"
+402,2B,"1 double bed (single occupancy), 1 single bed"
+403,2B,"1 double bed (single occupancy), 1 single bed"
+404,2B,"1 double bed (single occupancy), 1 single bed"
+405,2B,"1 double bed (single occupancy), 1 single bed"
+406,2B,"1 double bed (single occupancy), 1 single bed"
+601,3B,"3 single bed"
+602,3B,"3 single bed"
+603,3B,"3 single bed"
+604,3B,"3 single bed"
+605,3B,"3 single bed"
+606,3B,"3 single bed"
+701,2A,"1 double bed (shared)"
+702,2A,"1 double bed (shared)"
+703,2C,"2 single bed"`
 
 export const SAMPLE_EXACT_REGISTRATION_CSV = `Name,Room,Bed,Notes
 "David Miller",Type B,double bed (shared),"Agreed to share bed with Harry Peterson"
