@@ -10,7 +10,8 @@ coverage/
 .idea/
 
 # Claude Plugins
-.superpowers/
+.superpowers/sdd/
+docs/superpowers/plans/
 
 # OS
 .DS_Store
