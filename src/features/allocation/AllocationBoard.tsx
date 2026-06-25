@@ -1,4 +1,4 @@
-import { Sparkles, XCircle } from 'lucide-react'
+import { RotateCcw, RotateCw, Sparkles, XCircle } from 'lucide-react'
 import { useWorkspaceStore } from '../../store/useWorkspaceStore'
 import ParticipantPool from './ParticipantPool'
 import RoomCard from './RoomCard'
@@ -9,6 +9,10 @@ export default function AllocationBoard() {
   const autoAllocate = useWorkspaceStore((s) => s.autoAllocate)
   const resetAllocations = useWorkspaceStore((s) => s.resetAllocations)
   const clearAssignError = useWorkspaceStore((s) => s.clearAssignError)
+  const historyIndex = useWorkspaceStore((s) => s.historyIndex)
+  const historyLength = useWorkspaceStore((s) => s.history.length)
+  const undo = useWorkspaceStore((s) => s.undo)
+  const redo = useWorkspaceStore((s) => s.redo)
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
@@ -18,7 +22,7 @@ export default function AllocationBoard() {
 
       <div className="xl:col-span-8 space-y-6">
         <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 print:hidden">
-          <div>
+          <div className="min-w-0">
             <h2 className="text-sm font-bold text-slate-800">Drag & Drop to Allocate</h2>
             <p className="text-[11px] text-slate-400 mt-0.5 leading-snug">
               Drag guests from the sidebar pool and drop them onto unoccupied bed slots below. Only beds that match
@@ -26,25 +30,48 @@ export default function AllocationBoard() {
             </p>
           </div>
           <div className="items-center gap-2 hidden lg:flex flex-shrink-0">
+            <div className="flex items-center bg-slate-100 border border-slate-200 p-1 rounded-lg">
+              <button
+                type="button"
+                id="undo-btn"
+                onClick={undo}
+                disabled={historyIndex <= 0}
+                className="p-1.5 rounded-md hover:bg-slate-200 disabled:opacity-20 text-slate-600 disabled:hover:bg-transparent transition-colors cursor-pointer"
+                title="Undo mapping step"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </button>
+              <div className="h-4 w-px bg-slate-300 mx-1" />
+              <button
+                type="button"
+                id="redo-btn"
+                onClick={redo}
+                disabled={historyIndex >= historyLength - 1}
+                className="p-1.5 rounded-md hover:bg-slate-200 disabled:opacity-20 text-slate-600 disabled:hover:bg-transparent transition-colors cursor-pointer"
+                title="Redo mapping step"
+              >
+                <RotateCw className="w-4 h-4" />
+              </button>
+            </div>
             <button
               type="button"
               id="header-auto-allocate-btn"
               onClick={autoAllocate}
-              className="px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-lg border border-indigo-150 transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+              className="px-3.5 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-lg border border-indigo-150 transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
               title="Run matching model to auto-assign vacant beds"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              Auto-Allocate Beds
+              Auto-Allocate
             </button>
             <button
               type="button"
               id="header-clear-all-btn"
               onClick={resetAllocations}
-              className="px-3.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-lg border border-rose-150 transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-lg border border-rose-150 transition-all flex items-center gap-1.5 cursor-pointer"
               title="Remove all allocations"
             >
               <XCircle className="w-3.5 h-3.5" />
-              Reset Board
+              Reset
             </button>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { DoorOpen, FileText, Printer, RotateCcw, RotateCw } from 'lucide-react'
+import { DoorOpen, FileText, Printer } from 'lucide-react'
 import AllocationBoard from './features/allocation/AllocationBoard'
 import CsvImport from './features/csv-import/CsvImport'
 import PrintReport from './features/report/PrintReport'
@@ -7,10 +7,6 @@ import { useWorkspaceStore } from './store/useWorkspaceStore'
 export default function App() {
   const activeTab = useWorkspaceStore((s) => s.activeTab)
   const setActiveTab = useWorkspaceStore((s) => s.setActiveTab)
-  const historyIndex = useWorkspaceStore((s) => s.historyIndex)
-  const historyLength = useWorkspaceStore((s) => s.history.length)
-  const undo = useWorkspaceStore((s) => s.undo)
-  const redo = useWorkspaceStore((s) => s.redo)
   const rooms = useWorkspaceStore((s) => s.rooms)
   const participants = useWorkspaceStore((s) => s.participants)
 
@@ -55,30 +51,6 @@ export default function App() {
                 <span className="block text-[9px] text-slate-400 font-bold uppercase tracking-wider">Unassigned</span>
                 <span className="text-xs text-amber-400 font-extrabold">{unassignedCount}</span>
               </div>
-            </div>
-
-            <div className="flex items-center bg-slate-800 border border-slate-700 p-1 rounded-lg">
-              <button
-                type="button"
-                id="undo-btn"
-                onClick={undo}
-                disabled={historyIndex <= 0}
-                className="p-1.5 rounded-md hover:bg-slate-750 disabled:opacity-20 text-slate-300 disabled:hover:bg-transparent transition-colors cursor-pointer"
-                title="Undo mapping step"
-              >
-                <RotateCcw className="w-4 h-4" />
-              </button>
-              <div className="h-4 w-px bg-slate-700 mx-1" />
-              <button
-                type="button"
-                id="redo-btn"
-                onClick={redo}
-                disabled={historyIndex >= historyLength - 1}
-                className="p-1.5 rounded-md hover:bg-slate-750 disabled:opacity-20 text-slate-300 disabled:hover:bg-transparent transition-colors cursor-pointer"
-                title="Redo mapping step"
-              >
-                <RotateCw className="w-4 h-4" />
-              </button>
             </div>
           </div>
         </div>
