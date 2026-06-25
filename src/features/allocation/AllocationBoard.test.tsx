@@ -11,6 +11,7 @@ vi.mock('../../store/useWorkspaceStore', () => ({
 type MockState = {
   rooms: { id: string; category: string; beds: Bed[]; capacity: number }[]
   participants: []
+  draggedParticipant: null
   assignError: string | null
   autoAllocate: () => void
   resetAllocations: () => void
@@ -32,6 +33,7 @@ function setupMock(overrides: Partial<MockState> = {}) {
   const state: MockState = {
     rooms: [],
     participants: [],
+    draggedParticipant: null,
     assignError: null,
     autoAllocate: vi.fn(),
     resetAllocations: vi.fn(),
@@ -167,6 +169,6 @@ describe('AllocationBoard — Auto-Allocate toast', () => {
   it('does not render toast when autoAllocateResult is null', () => {
     setupMock({ autoAllocateResult: null })
     render(<AllocationBoard />)
-    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Dismiss notification')).not.toBeInTheDocument()
   })
 })

@@ -1,15 +1,157 @@
+import { useDraggable } from '@dnd-kit/core'
 import { Search, UserPlus, Users } from 'lucide-react'
-import type React from 'react'
 import { useMemo, useState } from 'react'
-import { getBedTypeLabel } from '../../shared/bedTypes'
-import type { Participant } from '../../shared/types'
+import type { Participant, Room } from '../../shared/types'
 import { useWorkspaceStore } from '../../store/useWorkspaceStore'
+
+function getCardBorderLeft(bedType: string) {
+  if (bedType === 'double_single') return 'border-l-4 border-l-purple-400'
+  if (bedType === 'double_shared') return 'border-l-4 border-l-amber-400'
+  return 'border-l-4 border-l-indigo-400'
+}
+
+function DraggableParticipantCard({
+  participant,
+  isQuickAssignOpen,
+  onToggleQuickAssign,
+  vacantBeds,
+  rooms,
+  assignParticipant
+}: {
+  participant: Participant
+  isQuickAssignOpen: boolean
+  onToggleQuickAssign: () => void
+  vacantBeds: Array<{ roomName: string; roomId: string; bedId: string; bedType: string }>
+  rooms: Room[]
+  assignParticipant: (participantId: string, roomId: string, bedId: string) => void
+}) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: participant.id,
+    data: { participant }
+  })
+
+  return (
+    <div
+      id={`participant-${participant.id}`}
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      style={{ opacity: isDragging ? 0.5 : 1 }}
+      className={`relative group border rounded-xl p-3.5 transition-all text-left flex flex-col space-y-2 select-none shadow-xs ${getCardBorderLeft(participant.requestedBedType)} bg-white border-slate-200 hover:border-slate-350 hover:shadow-xs active:cursor-grabbing cursor-grab`}
+    >
+      <div className="absolute top-3.5 right-3 w-4 h-5 flex flex-col items-center justify-between py-1 opacity-20 group-hover:opacity-40">
+        <span className="w-3.5 h-[2px] bg-slate-600 rounded-full" />
+        <span className="w-3.5 h-[2px] bg-slate-600 rounded-full" />
+        <span className="w-3.5 h-[2px] bg-slate-600 rounded-full" />
+      </div>
+
+      <div className="pr-6">
+        <h4 className="text-xs font-bold text-slate-800">{participant.name}</h4>
+      </div>
+
+      <div className="flex flex-wrap gap-1.5">
+        {participant.requestedRoomType && (
+          <span className="bg-amber-50/70 text-amber-800 border border-amber-200/50 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+            🏨 {participant.requestedRoomType}
+          </span>
+        )}
+        {participant.requestedBedType && (
+          <span className="bg-teal-50/70 text-teal-800 border border-teal-200/50 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+            🛏️ {participant.requestedBedType}
+          </span>
+        )}
+      </div>
+
+      {participant.sharingPreferences && (
+        <div className="p-2 rounded bg-slate-50 text-[10px] text-slate-600 leading-normal border-l-2 border-indigo-200">
+          <span className="font-bold text-indigo-700 block mb-0.5">Preference & Share details:</span>"
+          {participant.sharingPreferences}"
+        </div>
+      )}
+
+      <div className="flex items-center gap-2 pt-1 border-t border-slate-50">
+        <div className="w-full">
+          <button
+            type="button"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={onToggleQuickAssign}
+            className="text-[10px] bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-2 py-1 rounded flex items-center gap-1 transition-all cursor-pointer"
+          >
+            <UserPlus className="w-3 h-3" />
+            Quick Allocate Bed...
+          </button>
+
+          {isQuickAssignOpen && (
+            <div
+              onPointerDown={(e) => e.stopPropagation()}
+              className="absolute left-0 right-0 mt-2 p-2.5 bg-white rounded-xl shadow-lg border border-slate-200 z-50 text-xs space-y-2 animate-fadeIn max-h-56 overflow-y-auto"
+            >
+              <div className="flex items-center justify-between border-b pb-1.5">
+                <span className="font-bold text-slate-700">Select Available Bed:</span>
+                <button
+                  type="button"
+                  onClick={onToggleQuickAssign}
+                  className="text-[10px] text-slate-400 hover:text-slate-600"
+                >
+                  Close
+                </button>
+              </div>
+              {(() => {
+                const matchingBeds = vacantBeds.filter((bed) => {
+                  const targetRoom = rooms.find((r) => r.id === bed.roomId)
+                  if (!targetRoom) return false
+                  return (
+                    targetRoom.category.trim().toLowerCase() === participant.requestedRoomType.trim().toLowerCase() &&
+                    bed.bedType.trim().toLowerCase() === participant.requestedBedType.trim().toLowerCase()
+                  )
+                })
+
+                if (matchingBeds.length === 0) {
+                  return (
+                    <div className="p-3 text-center bg-amber-50 rounded-lg border border-amber-200 text-[11px] text-amber-800 font-bold leading-normal">
+                      ⚠️ No vacant slots available matching:
+                      <div className="mt-1 text-slate-600 font-medium">
+                        🏨 Category {participant.requestedRoomType}
+                        <br />
+                        🛏️ Configuration {participant.requestedBedType}
+                      </div>
+                    </div>
+                  )
+                }
+
+                return (
+                  <div className="space-y-1">
+                    {matchingBeds.map((bed) => (
+                      <button
+                        type="button"
+                        key={bed.bedId}
+                        onClick={() => {
+                          assignParticipant(participant.id, bed.roomId, bed.bedId)
+                          onToggleQuickAssign()
+                        }}
+                        className="w-full text-left p-1.5 hover:bg-emerald-50 rounded text-[11px] text-slate-705 font-semibold flex items-center justify-between border border-transparent hover:border-emerald-250 cursor-pointer"
+                      >
+                        <span>{bed.roomName}</span>
+                        <span className="bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded text-[10px] font-bold">
+                          {bed.bedType}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )
+              })()}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export default function ParticipantPool() {
   const participants = useWorkspaceStore((s) => s.participants)
   const rooms = useWorkspaceStore((s) => s.rooms)
   const assignParticipant = useWorkspaceStore((s) => s.assignParticipant)
-  const setDraggedParticipant = useWorkspaceStore((s) => s.setDraggedParticipant)
   const roomTypeFilter = useWorkspaceStore((s) => s.roomTypeFilter)
   const setRoomTypeFilter = useWorkspaceStore((s) => s.setRoomTypeFilter)
 
@@ -48,23 +190,6 @@ export default function ParticipantPool() {
       return matchesSearch && matchesRoomPref
     })
   }, [participants, searchTerm, roomTypeFilter])
-
-  const getCardBorderLeft = (bedType: string) => {
-    const norm = (bedType || '').toLowerCase()
-    if (norm.includes('single occupancy')) return 'border-l-4 border-l-purple-400'
-    if (norm.includes('shared')) return 'border-l-4 border-l-amber-400'
-    return 'border-l-4 border-l-indigo-400'
-  }
-
-  const handleDragStart = (e: React.DragEvent, participant: Participant) => {
-    e.dataTransfer.setData('text/plain', participant.id)
-    e.dataTransfer.effectAllowed = 'move'
-    setDraggedParticipant(participant)
-  }
-
-  const handleDragEnd = () => {
-    setDraggedParticipant(null)
-  }
 
   return (
     <div
@@ -135,120 +260,16 @@ export default function ParticipantPool() {
         ) : (
           filteredParticipants.map((participant) => {
             const isQuickAssignOpen = selectedForQuickAssign === participant.id
-
             return (
-              // biome-ignore lint/a11y/noStaticElementInteractions: draggable participant card
-              <div
+              <DraggableParticipantCard
                 key={participant.id}
-                id={`participant-${participant.id}`}
-                draggable
-                onDragStart={(e) => handleDragStart(e, participant)}
-                onDragEnd={handleDragEnd}
-                className={`relative group border rounded-xl p-3.5 transition-all text-left flex flex-col space-y-2 select-none shadow-xs ${getCardBorderLeft(participant.requestedBedType)} bg-white border-slate-200 hover:border-slate-350 hover:shadow-xs active:cursor-grabbing cursor-grab`}
-              >
-                <div className="absolute top-3.5 right-3 w-4 h-5 flex flex-col items-center justify-between py-1 opacity-20 group-hover:opacity-40">
-                  <span className="w-3.5 h-[2px] bg-slate-600 rounded-full"></span>
-                  <span className="w-3.5 h-[2px] bg-slate-600 rounded-full"></span>
-                  <span className="w-3.5 h-[2px] bg-slate-600 rounded-full"></span>
-                </div>
-
-                <div className="pr-6">
-                  <h4 className="text-xs font-bold text-slate-800">{participant.name}</h4>
-                </div>
-
-                <div className="flex flex-wrap gap-1.5">
-                  {participant.requestedRoomType && (
-                    <span className="bg-amber-50/70 text-amber-800 border border-amber-200/50 text-[10px] font-semibold px-2 py-0.5 rounded-full">
-                      🏨 {participant.requestedRoomType}
-                    </span>
-                  )}
-                  {participant.requestedBedType && (
-                    <span className="bg-teal-50/70 text-teal-800 border border-teal-200/50 text-[10px] font-semibold px-2 py-0.5 rounded-full">
-                      🛏️ {getBedTypeLabel(participant.requestedBedType)}
-                    </span>
-                  )}
-                </div>
-
-                {participant.sharingPreferences && (
-                  <div className="p-2 rounded bg-slate-50 text-[10px] text-slate-600 leading-normal border-l-2 border-indigo-200">
-                    <span className="font-bold text-indigo-700 block mb-0.5">Preference & Share details:</span>"
-                    {participant.sharingPreferences}"
-                  </div>
-                )}
-
-                <div className="flex items-center gap-2 pt-1 border-t border-slate-50">
-                  <div className="w-full">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedForQuickAssign(isQuickAssignOpen ? null : participant.id)}
-                      className="text-[10px] bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-2 py-1 rounded flex items-center gap-1 transition-all cursor-pointer"
-                    >
-                      <UserPlus className="w-3 h-3" />
-                      Quick Allocate Bed...
-                    </button>
-
-                    {isQuickAssignOpen && (
-                      <div className="absolute left-0 right-0 mt-2 p-2.5 bg-white rounded-xl shadow-lg border border-slate-200 z-50 text-xs space-y-2 animate-fadeIn max-h-56 overflow-y-auto">
-                        <div className="flex items-center justify-between border-b pb-1.5">
-                          <span className="font-bold text-slate-700">Select Available Bed:</span>
-                          <button
-                            type="button"
-                            onClick={() => setSelectedForQuickAssign(null)}
-                            className="text-[10px] text-slate-400 hover:text-slate-600"
-                          >
-                            Close
-                          </button>
-                        </div>
-                        {(() => {
-                          const matchingBeds = vacantBeds.filter((bed) => {
-                            const targetRoom = rooms.find((r) => r.id === bed.roomId)
-                            if (!targetRoom) return false
-                            return (
-                              targetRoom.category.trim().toLowerCase() ===
-                                participant.requestedRoomType.trim().toLowerCase() &&
-                              bed.bedType === participant.requestedBedType
-                            )
-                          })
-
-                          if (matchingBeds.length === 0) {
-                            return (
-                              <div className="p-3 text-center bg-amber-50 rounded-lg border border-amber-200 text-[11px] text-amber-800 font-bold leading-normal">
-                                ⚠️ No vacant slots available matching:
-                                <div className="mt-1 text-slate-600 font-medium">
-                                  🏨 Category {participant.requestedRoomType}
-                                  <br />
-                                  🛏️ Configuration {getBedTypeLabel(participant.requestedBedType)}
-                                </div>
-                              </div>
-                            )
-                          }
-
-                          return (
-                            <div className="space-y-1">
-                              {matchingBeds.map((bed) => (
-                                <button
-                                  type="button"
-                                  key={bed.bedId}
-                                  onClick={() => {
-                                    assignParticipant(participant.id, bed.roomId, bed.bedId)
-                                    setSelectedForQuickAssign(null)
-                                  }}
-                                  className="w-full text-left p-1.5 hover:bg-emerald-50 rounded text-[11px] text-slate-705 font-semibold flex items-center justify-between border border-transparent hover:border-emerald-250 cursor-pointer"
-                                >
-                                  <span>{bed.roomName}</span>
-                                  <span className="bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded text-[10px] font-bold">
-                                    {bed.bedType}
-                                  </span>
-                                </button>
-                              ))}
-                            </div>
-                          )
-                        })()}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
+                participant={participant}
+                isQuickAssignOpen={isQuickAssignOpen}
+                onToggleQuickAssign={() => setSelectedForQuickAssign(isQuickAssignOpen ? null : participant.id)}
+                vacantBeds={vacantBeds}
+                rooms={rooms}
+                assignParticipant={assignParticipant}
+              />
             )
           })
         )}

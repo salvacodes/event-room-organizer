@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import type { Participant, Room } from '../../shared/types'
 import { useWorkspaceStore } from '../../store/useWorkspaceStore'
@@ -16,16 +16,6 @@ const room: Room = {
     { id: 'bed-1', type: 'single', label: 'Single Bed 1', assignedParticipantId: null },
     { id: 'bed-2', type: 'single', label: 'Single Bed 2', assignedParticipantId: null }
   ]
-}
-
-const compatibleParticipant: Participant = {
-  id: 'p1',
-  name: 'Alice',
-  requestedRoomType: 'Standard',
-  requestedBedType: 'single',
-  sharingPreferences: '',
-  assignedRoomId: null,
-  assignedBedId: null
 }
 
 function setupMock(draggedParticipant: Participant | null = null) {
