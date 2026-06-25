@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseBedConfiguration } from './csvParser'
+import { parseBedConfiguration, parseRoomTypes } from './csvParser'
 
 describe('parseBedConfiguration', () => {
   it('parses a single bed', () => {
@@ -57,5 +57,23 @@ describe('parseBedConfiguration', () => {
 
   it('returns empty array for empty string', () => {
     expect(parseBedConfiguration('', 'room1')).toHaveLength(0)
+  })
+})
+
+describe('parseRoomTypes', () => {
+  it('wraps a single room type in an array', () => {
+    expect(parseRoomTypes('2A')).toEqual(['2A'])
+  })
+
+  it('splits multiple room types separated by / into an array', () => {
+    expect(parseRoomTypes('2B/2C')).toEqual(['2B', '2C'])
+  })
+
+  it('trims whitespace from each room type', () => {
+    expect(parseRoomTypes('2B / 2C')).toEqual(['2B', '2C'])
+  })
+
+  it('returns empty array for an empty string', () => {
+    expect(parseRoomTypes('')).toEqual([])
   })
 })

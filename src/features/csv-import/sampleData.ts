@@ -44,11 +44,11 @@ export const SAMPLE_EXACT_REGISTRATION_CSV = `Name,Room,Bed,Notes
 "Wanda Maximoff",2B,double_single,Prefers lower floor
 "Pietro Maximoff",2B,single,Any 2B is fine
 "Bruce Banner",2B,double_single,Quiet environment preferred
-"Thor Odinson",2B,single,No preference
+"Thor Odinson",2B/2C,single,No preference
 "Sam Wilson",2B,double_single,Any 2B room works
-"Bucky Barnes",2B,single,Easy going
-"Lara Croft",2C,single,Light sleeper
-"Nathan Drake",2C,single,No specific preference
+"Bucky Barnes",2B/2C,single,Easy going
+"Lara Croft",2B/2C,single,Light sleeper - happy in either 2B or 2C
+"Nathan Drake",2B/2C,single,No specific preference
 "Steve Rogers",3A,single,Happy with bunk-style
 "Carol Danvers",3A,single,No preference
 "Peter Parker",3A,single,Happy with any 3A bed

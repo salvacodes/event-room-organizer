@@ -188,9 +188,9 @@ export default function AllocationBoard() {
           <div className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-lg opacity-95 w-64 cursor-grabbing pointer-events-none">
             <h4 className="text-xs font-bold text-slate-800">{draggedParticipant.name}</h4>
             <div className="flex flex-wrap gap-1.5 mt-1.5">
-              {draggedParticipant.requestedRoomType && (
+              {draggedParticipant.requestedRoomType.length > 0 && (
                 <span className="bg-amber-50/70 text-amber-800 border border-amber-200/50 text-[10px] font-semibold px-2 py-0.5 rounded-full">
-                  🏨 {draggedParticipant.requestedRoomType}
+                  🏨 {draggedParticipant.requestedRoomType.join(' / ')}
                 </span>
               )}
               {draggedParticipant.requestedBedType && (

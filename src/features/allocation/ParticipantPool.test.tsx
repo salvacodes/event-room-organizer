@@ -10,7 +10,7 @@ vi.mock('../../store/useWorkspaceStore', () => ({
 const unassigned = {
   id: 'p1',
   name: 'Alice Unassigned',
-  requestedRoomType: 'Standard',
+  requestedRoomType: ['Standard'],
   requestedBedType: 'single bed',
   sharingPreferences: '',
   assignedRoomId: null,
@@ -20,7 +20,7 @@ const unassigned = {
 const assigned = {
   id: 'p2',
   name: 'Bob Assigned',
-  requestedRoomType: 'Standard',
+  requestedRoomType: ['Standard'],
   requestedBedType: 'single bed',
   sharingPreferences: '',
   assignedRoomId: 'Room 101',
@@ -41,6 +41,38 @@ function setupMock(participants = [unassigned, assigned], roomTypeFilter = 'all'
     })
   )
 }
+
+describe('ParticipantPool — multi-room-type filter', () => {
+  it('shows a participant when the room type filter matches any of their requested room types', () => {
+    const multiRoomParticipant = {
+      id: 'p-multi',
+      name: 'Multi Room Guest',
+      requestedRoomType: ['2B', '2C'],
+      requestedBedType: 'single' as const,
+      sharingPreferences: '',
+      assignedRoomId: null,
+      assignedBedId: null
+    }
+    setupMock([multiRoomParticipant], '2C')
+    render(<ParticipantPool />)
+    expect(screen.getByText('Multi Room Guest')).toBeInTheDocument()
+  })
+
+  it('hides a participant when the room type filter does not match any of their requested room types', () => {
+    const multiRoomParticipant = {
+      id: 'p-multi',
+      name: 'Multi Room Guest',
+      requestedRoomType: ['2B', '2C'],
+      requestedBedType: 'single' as const,
+      sharingPreferences: '',
+      assignedRoomId: null,
+      assignedBedId: null
+    }
+    setupMock([multiRoomParticipant], '3A')
+    render(<ParticipantPool />)
+    expect(screen.queryByText('Multi Room Guest')).not.toBeInTheDocument()
+  })
+})
 
 describe('ParticipantPool — room type filter label', () => {
   it('labels the filter "Room Type"', () => {

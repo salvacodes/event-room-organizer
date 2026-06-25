@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { parseBedConfiguration, parseCSV } from '../features/csv-import/csvParser'
+import { parseBedConfiguration, parseCSV, parseRoomTypes } from '../features/csv-import/csvParser'
 import { SAMPLE_EXACT_REGISTRATION_CSV, SAMPLE_EXACT_ROOMS_CSV } from '../features/csv-import/sampleData'
 import type { BedType } from '../shared/bedTypes'
 import { getBedTypeLabel } from '../shared/bedTypes'
@@ -55,7 +55,7 @@ function buildDefaultDataset(): { rooms: Room[]; participants: Participant[] } {
     participants.push({
       id: `p-default-${i}`,
       name: row[0],
-      requestedRoomType: row[1] || 'Type A',
+      requestedRoomType: parseRoomTypes(row[1] || 'Type A'),
       requestedBedType: (row[2] as BedType) || 'single',
       sharingPreferences: row[3] || '',
       assignedRoomId: null,
@@ -73,7 +73,15 @@ function loadInitialState(): Pick<WorkspaceStore, 'rooms' | 'participants' | 'hi
   if (savedRooms && savedParticipants) {
     try {
       const rooms = JSON.parse(savedRooms) as Room[]
-      const participants = JSON.parse(savedParticipants) as Participant[]
+      const rawParticipants = JSON.parse(savedParticipants) as Array<
+        Omit<Participant, 'requestedRoomType'> & { requestedRoomType: string | string[] }
+      >
+      const participants: Participant[] = rawParticipants.map((p) => ({
+        ...p,
+        requestedRoomType: Array.isArray(p.requestedRoomType)
+          ? p.requestedRoomType
+          : [p.requestedRoomType].filter(Boolean)
+      }))
       return { rooms, participants, history: [{ rooms, participants }], historyIndex: 0 }
     } catch {
       console.warn('Stale local storage format. Re-rendering default pre-sets.')
@@ -125,12 +133,10 @@ export const useWorkspaceStore = create<WorkspaceStore>()((set, get) => {
       if (!bed) return
 
       const normStr = (s: string) => (s || '').trim().toLowerCase()
-      if (
-        normStr(participant.requestedRoomType) !== normStr(room.category) ||
-        participant.requestedBedType !== bed.type
-      ) {
+      const roomTypeMatch = participant.requestedRoomType.some((rt) => normStr(rt) === normStr(room.category))
+      if (!roomTypeMatch || participant.requestedBedType !== bed.type) {
         set({
-          assignError: `Assignment Blocked: "${participant.name}" requested Room Category [${participant.requestedRoomType}] and Bed Config [${getBedTypeLabel(participant.requestedBedType)}]. You attempted to place them in a Room of Category [${room.category}] and Bed Config [${bed.label || getBedTypeLabel(bed.type)}].`
+          assignError: `Assignment Blocked: "${participant.name}" requested Room Category [${participant.requestedRoomType.join(' / ')}] and Bed Config [${getBedTypeLabel(participant.requestedBedType)}]. You attempted to place them in a Room of Category [${room.category}] and Bed Config [${bed.label || getBedTypeLabel(bed.type)}].`
         })
         return
       }
@@ -201,7 +207,10 @@ export const useWorkspaceStore = create<WorkspaceStore>()((set, get) => {
         let assigned = false
 
         for (const room of updatedRooms) {
-          if (room.category.trim().toLowerCase() !== participant.requestedRoomType.trim().toLowerCase()) continue
+          if (
+            !participant.requestedRoomType.some((rt) => rt.trim().toLowerCase() === room.category.trim().toLowerCase())
+          )
+            continue
 
           for (const bed of room.beds) {
             if (bed.assignedParticipantId) continue

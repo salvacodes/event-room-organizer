@@ -36,7 +36,7 @@ function BedSlot({
 
   const hasRoomCategoryMismatch =
     occupant?.requestedRoomType != null &&
-    occupant.requestedRoomType.trim().toLowerCase() !== roomCategory.trim().toLowerCase()
+    !occupant.requestedRoomType.some((rt) => rt.trim().toLowerCase() === roomCategory.trim().toLowerCase())
 
   const hasBedTypeMismatch = occupant?.requestedBedType != null && occupant.requestedBedType !== bed.type
 
@@ -91,7 +91,7 @@ function BedSlot({
                   <AlertTriangle className="w-3.5 h-3.5 text-amber-500 cursor-help" />
                   <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-1.5 hidden group-hover/warn:block w-48 p-2 bg-slate-900 border border-slate-800 text-[10px] text-slate-250 rounded-lg shadow-md z-30 leading-normal pointer-events-none">
                     <span className="font-bold text-amber-400 block mb-0.5">Allocation Mismatch:</span>
-                    {hasRoomCategoryMismatch && `• Requested Room: ${occupant.requestedRoomType}`}
+                    {hasRoomCategoryMismatch && `• Requested Room: ${occupant.requestedRoomType.join(' / ')}`}
                     {hasRoomCategoryMismatch && hasBedTypeMismatch && <br />}
                     {hasBedTypeMismatch && `• Requested Bed: ${occupant.requestedBedType}`}
                   </div>
@@ -140,7 +140,7 @@ export default function RoomCard({ room }: RoomCardProps) {
   const isFull = occupiedBedsCount >= totalBedsCount
 
   const isRoomCompatible = draggedParticipant
-    ? draggedParticipant.requestedRoomType.trim().toLowerCase() === room.category.trim().toLowerCase()
+    ? draggedParticipant.requestedRoomType.some((rt) => rt.trim().toLowerCase() === room.category.trim().toLowerCase())
     : true
 
   let cardClassName = 'relative bg-white rounded-xl border p-4 transition-all duration-200 flex flex-col space-y-4'

@@ -50,9 +50,9 @@ function DraggableParticipantCard({
       </div>
 
       <div className="flex flex-wrap gap-1.5">
-        {participant.requestedRoomType && (
+        {participant.requestedRoomType.length > 0 && (
           <span className="bg-amber-50/70 text-amber-800 border border-amber-200/50 text-[10px] font-semibold px-2 py-0.5 rounded-full">
-            🏨 {participant.requestedRoomType}
+            🏨 {participant.requestedRoomType.join(' / ')}
           </span>
         )}
         {participant.requestedBedType && (
@@ -101,8 +101,9 @@ function DraggableParticipantCard({
                   const targetRoom = rooms.find((r) => r.id === bed.roomId)
                   if (!targetRoom) return false
                   return (
-                    targetRoom.category.trim().toLowerCase() === participant.requestedRoomType.trim().toLowerCase() &&
-                    bed.bedType.trim().toLowerCase() === participant.requestedBedType.trim().toLowerCase()
+                    participant.requestedRoomType.some(
+                      (rt) => rt.trim().toLowerCase() === targetRoom.category.trim().toLowerCase()
+                    ) && bed.bedType.trim().toLowerCase() === participant.requestedBedType.trim().toLowerCase()
                   )
                 })
 
@@ -111,7 +112,7 @@ function DraggableParticipantCard({
                     <div className="p-3 text-center bg-amber-50 rounded-lg border border-amber-200 text-[11px] text-amber-800 font-bold leading-normal">
                       ⚠️ No vacant slots available matching:
                       <div className="mt-1 text-slate-600 font-medium">
-                        🏨 Category {participant.requestedRoomType}
+                        🏨 Category {participant.requestedRoomType.join(' / ')}
                         <br />
                         🛏️ Configuration {participant.requestedBedType}
                       </div>
@@ -161,7 +162,9 @@ export default function ParticipantPool() {
   const roomPrefOptions = useMemo(() => {
     const prefs = new Set<string>()
     participants.forEach((p) => {
-      if (p.requestedRoomType) prefs.add(p.requestedRoomType)
+      p.requestedRoomType.forEach((rt) => {
+        if (rt) prefs.add(rt)
+      })
     })
     return Array.from(prefs).sort()
   }, [participants])
@@ -185,8 +188,8 @@ export default function ParticipantPool() {
       const matchesSearch =
         p.name.toLowerCase().includes(term) ||
         p.sharingPreferences.toLowerCase().includes(term) ||
-        p.requestedRoomType?.toLowerCase().includes(term)
-      const matchesRoomPref = roomTypeFilter === 'all' || p.requestedRoomType === roomTypeFilter
+        p.requestedRoomType.some((rt) => rt.toLowerCase().includes(term))
+      const matchesRoomPref = roomTypeFilter === 'all' || p.requestedRoomType.includes(roomTypeFilter)
       return matchesSearch && matchesRoomPref
     })
   }, [participants, searchTerm, roomTypeFilter])

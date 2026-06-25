@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Bed, Participant, Room } from '../shared/types'
 import { useWorkspaceStore } from './useWorkspaceStore'
 
@@ -16,11 +16,11 @@ function makeRoom(id: string, category: string, bedTypes: Bed['type'][]): Room {
   }
 }
 
-function makeParticipant(id: string, roomType: string, bedType: Bed['type']): Participant {
+function makeParticipant(id: string, roomType: string | string[], bedType: Bed['type']): Participant {
   return {
     id,
     name: `Guest ${id}`,
-    requestedRoomType: roomType,
+    requestedRoomType: Array.isArray(roomType) ? roomType : [roomType],
     requestedBedType: bedType,
     sharingPreferences: '',
     assignedRoomId: null,
@@ -38,6 +38,46 @@ function resetStore(rooms: Room[], participants: Participant[]) {
     assignError: null
   })
 }
+
+describe('assignParticipant', () => {
+  beforeEach(() => {
+    localStorage.clear()
+  })
+
+  it('assigns a participant to a room matching any of their multiple requested room types', () => {
+    const room = makeRoom('Room 2B', '2B', ['single'])
+    const participant: Participant = {
+      id: 'p-multi',
+      name: 'Multi Guest',
+      requestedRoomType: ['2A', '2B'],
+      requestedBedType: 'single',
+      sharingPreferences: '',
+      assignedRoomId: null,
+      assignedBedId: null
+    }
+    resetStore([room], [participant])
+    useWorkspaceStore.getState().assignParticipant('p-multi', 'Room 2B', 'Room 2B-bed-0')
+    expect(useWorkspaceStore.getState().assignError).toBeNull()
+    expect(useWorkspaceStore.getState().participants[0].assignedRoomId).toBe('Room 2B')
+  })
+
+  it('blocks assignment when room category is not in participant requested room type list', () => {
+    const room = makeRoom('Room 3A', '3A', ['single'])
+    const participant: Participant = {
+      id: 'p-multi',
+      name: 'Multi Guest',
+      requestedRoomType: ['2A', '2B'],
+      requestedBedType: 'single',
+      sharingPreferences: '',
+      assignedRoomId: null,
+      assignedBedId: null
+    }
+    resetStore([room], [participant])
+    useWorkspaceStore.getState().assignParticipant('p-multi', 'Room 3A', 'Room 3A-bed-0')
+    expect(useWorkspaceStore.getState().assignError).not.toBeNull()
+    expect(useWorkspaceStore.getState().participants[0].assignedRoomId).toBeNull()
+  })
+})
 
 describe('autoAllocate', () => {
   beforeEach(() => {
@@ -114,6 +154,38 @@ describe('roomTypeFilter', () => {
     useWorkspaceStore.setState({ roomTypeFilter: 'Standard' })
     useWorkspaceStore.getState().setRoomTypeFilter('all')
     expect(useWorkspaceStore.getState().roomTypeFilter).toBe('all')
+  })
+})
+
+describe('loadInitialState — stale localStorage migration', () => {
+  it('normalizes requestedRoomType from string to array when loading from localStorage', async () => {
+    const staleParticipants = [
+      {
+        id: 'p1',
+        name: 'Guest One',
+        requestedRoomType: 'Standard',
+        requestedBedType: 'single',
+        sharingPreferences: '',
+        assignedRoomId: null,
+        assignedBedId: null
+      }
+    ]
+    const rooms = [
+      {
+        id: 'Room A',
+        category: 'Standard',
+        capacity: 1,
+        beds: [{ id: 'Room A-bed-0', type: 'single', label: 'Bed 0', assignedParticipantId: null }]
+      }
+    ]
+    localStorage.setItem('event_room_organizer_rooms_v1', JSON.stringify(rooms))
+    localStorage.setItem('event_room_organizer_participants_v1', JSON.stringify(staleParticipants))
+
+    vi.resetModules()
+    const { useWorkspaceStore: freshStore } = await import('./useWorkspaceStore')
+    const participants = freshStore.getState().participants
+
+    expect(participants[0].requestedRoomType).toEqual(['Standard'])
   })
 })
 

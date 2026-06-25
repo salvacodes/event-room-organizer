@@ -4,7 +4,7 @@ import { useState } from 'react'
 import type { BedType } from '../../shared/bedTypes'
 import type { Participant, Room } from '../../shared/types'
 import { useWorkspaceStore } from '../../store/useWorkspaceStore'
-import { parseBedConfiguration, parseCSV } from './csvParser'
+import { parseBedConfiguration, parseCSV, parseRoomTypes } from './csvParser'
 import { SAMPLE_EXACT_REGISTRATION_CSV, SAMPLE_EXACT_ROOMS_CSV } from './sampleData'
 
 export default function CsvImport() {
@@ -98,7 +98,7 @@ export default function CsvImport() {
         parsedParticipants.push({
           id: `p-${i}-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
           name,
-          requestedRoomType: idxReqRoom !== -1 ? row[idxReqRoom] || 'Standard' : 'Standard',
+          requestedRoomType: parseRoomTypes(idxReqRoom !== -1 ? row[idxReqRoom] || 'Standard' : 'Standard'),
           requestedBedType: (idxReqBed !== -1 ? row[idxReqBed] || 'single' : 'single') as BedType,
           sharingPreferences: idxSharing !== -1 ? row[idxSharing] || '' : '',
           assignedRoomId: null,

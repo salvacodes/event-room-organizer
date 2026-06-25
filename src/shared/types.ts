@@ -19,7 +19,7 @@ export interface Room {
 export interface Participant {
   id: string
   name: string
-  requestedRoomType: string
+  requestedRoomType: string[]
   requestedBedType: BedType
   sharingPreferences: string
   assignedRoomId?: string | null

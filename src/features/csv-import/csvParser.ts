@@ -53,6 +53,13 @@ export function parseCSV(text: string): string[][] {
   return lines
 }
 
+export function parseRoomTypes(cell: string): string[] {
+  return cell
+    .split('/')
+    .map((s) => s.trim())
+    .filter(Boolean)
+}
+
 export function parseBedConfiguration(configStr: string, roomId: string): Bed[] {
   if (!configStr) return []
   const beds: Bed[] = []
