@@ -24,15 +24,15 @@ export const SAMPLE_EXACT_ROOMS_CSV = `Room,Type,Beds
 703,2C,"2 single bed"`
 
 export const SAMPLE_EXACT_REGISTRATION_CSV = `Name,Room,Bed,Notes
-"David Miller",Type B,double bed (shared),"Agreed to share bed with Harry Peterson"
-"Harry Peterson",Type B,double bed (shared),"Agreed to share bed with David Miller"
-"Alice Vance",Type C,double bed (single occupancy),"Agreed to share room with Bob Vance"
-"Bob Vance",Type C,single bed,"Agreed to share room with Alice Vance"
-"Charlotte Webb",Type A,double bed (single occupancy),Prefer quiet corner if available
-"Sarah Jenkins",Type C,single bed,Excited for any single bed option!
-"Emily Watson",Type C,single bed,No specific room preference
-"Frank Castle",Type A,double bed (single occupancy),Prefer isolated room
-"Grace Hopper",Type C,double bed (single occupancy),No sharing preferred
-"Tony Stark",Type C,double bed (single occupancy),Needs high-speed outlet nearby
-"Steve Rogers",Type C,single bed,"Comfortable bunking with Bucky Barnes"
-"Bucky Barnes",Type C,single bed,"Agreed to share with Steve Rogers"`
+"David Miller",2A,double bed (shared),"Agreed to share bed with Harry Peterson"
+"Harry Peterson",2A,double bed (shared),"Agreed to share bed with David Miller"
+"Alice Vance",2B,double bed (single occupancy),"Agreed to share room with Bob Vance"
+"Bob Vance",2B,single bed,"Agreed to share room with Alice Vance"
+"Charlotte Webb",2B,double bed (single occupancy),Prefer quiet corner if available
+"Sarah Jenkins",3B,single bed,Excited for any single bed option!
+"Emily Watson",3B,single bed,No specific room preference
+"Frank Castle",1A,double bed (single occupancy),Prefer isolated room
+"Grace Hopper",1A,double bed (single occupancy),No sharing preferred
+"Tony Stark",2B,double bed (single occupancy),Needs high-speed outlet nearby
+"Steve Rogers",3A,single bed,"Comfortable bunking with Bucky Barnes"
+"Bucky Barnes",3A,single bed,"Agreed to share with Steve Rogers"`
