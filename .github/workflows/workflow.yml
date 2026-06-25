@@ -31,11 +31,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Check Format
-        run: npm run format:check
+      - name: Check Types
+        run: npm run check:type
 
-      - name: Lint
-        run: npm run lint
+      - name: Format & Lint
+        run: npm run check
 
       - name: Test
         run: npm test

@@ -13,11 +13,11 @@ An interactive event room and bed planning tool. Drag-and-drop participants into
 
 ### Running the app
 
-1. Install dependencies: `npm install`
+1. Install dependencies: `npm i`
 2. Run the app locally: `npm run dev`
 
 ### Verifications
 
-* Formatting: `npm run format`
-* Type checking: `npm run type-check`
+* Type checking: `npm run check:type`
+* Formatting and Linting: `npm run check:fix` (or `npm run check` to just verify without fixing)
 * Unit tests: `npm run test`
