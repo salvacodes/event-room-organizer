@@ -120,10 +120,6 @@ export default function App() {
           </div>
         )}
       </main>
-
-      <div id="physical-page-print-injection" className="hidden print:block">
-        <PrintReport />
-      </div>
     </div>
   )
 }
