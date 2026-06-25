@@ -1,18 +1,11 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.5
- */
-
 import { CheckSquare, FileSpreadsheet, Info, LayoutGrid, Printer, Search } from 'lucide-react'
 import React, { useMemo, useState } from 'react'
-import type { Participant, Room } from '../types'
+import { useWorkspaceStore } from '../../store/useWorkspaceStore'
 
-interface PrintReportProps {
-  rooms: Room[]
-  participants: Participant[]
-}
+export default function PrintReport() {
+  const rooms = useWorkspaceStore((s) => s.rooms)
+  const participants = useWorkspaceStore((s) => s.participants)
 
-export default function PrintReport({ rooms, participants }: PrintReportProps) {
   const [reportTitle, setReportTitle] = useState('Summer Retreat 2026 — Official Room Allocations')
   const [reportNotes, setReportNotes] = useState(
     'Please check in at the reception desk to pick up your key. Absolute quiet hours are from 10:00 PM to 7:00 AM.'
@@ -20,12 +13,10 @@ export default function PrintReport({ rooms, participants }: PrintReportProps) {
   const [sortBy, setSortBy] = useState<'room' | 'guest'>('room')
   const [searchQuery, setSearchQuery] = useState('')
 
-  // Handler to trigger standard print action
   const handlePrint = () => {
     window.print()
   }
 
-  // Compile guest alphabetical list
   const guestRecords = useMemo(() => {
     return participants
       .map((p) => {
@@ -51,7 +42,6 @@ export default function PrintReport({ rooms, participants }: PrintReportProps) {
       .sort((a, b) => a.name.localeCompare(b.name))
   }, [participants, rooms, searchQuery])
 
-  // Compile sorted room checklist
   const roomRecords = useMemo(() => {
     return [...rooms]
       .filter((r) => {
@@ -68,7 +58,6 @@ export default function PrintReport({ rooms, participants }: PrintReportProps) {
 
   return (
     <div id="print-report-module" className="bg-white rounded-xl shadow-xs border border-slate-200 p-6 space-y-6">
-      {/* Configuration Panels (Hidden during print natively) */}
       <div className="print:hidden space-y-4 pb-6 border-b border-slate-100">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -92,7 +81,6 @@ export default function PrintReport({ rooms, participants }: PrintReportProps) {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-150">
-          {/* Column 1: Print title customizer */}
           <div className="flex flex-col space-y-1.5">
             <label className="text-xs font-bold text-slate-600 uppercase tracking-wide">Report Header Title</label>
             <input
@@ -104,7 +92,6 @@ export default function PrintReport({ rooms, participants }: PrintReportProps) {
             />
           </div>
 
-          {/* Column 2: Custom announcement */}
           <div className="flex flex-col space-y-1.5">
             <label className="text-xs font-bold text-slate-600 uppercase tracking-wide">
               Printable Footer Instructions
@@ -118,7 +105,6 @@ export default function PrintReport({ rooms, participants }: PrintReportProps) {
             />
           </div>
 
-          {/* Column 3: Format checklist toggler */}
           <div className="flex flex-col space-y-1.5">
             <label className="text-xs font-bold text-slate-600 uppercase tracking-wide">Handout Layout Format</label>
             <div className="grid grid-cols-2 gap-1 bg-white p-1 border border-slate-150 rounded">
@@ -148,7 +134,6 @@ export default function PrintReport({ rooms, participants }: PrintReportProps) {
           </div>
         </div>
 
-        {/* Search query in print previews */}
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400 pointer-events-none" />
           <input
@@ -162,16 +147,10 @@ export default function PrintReport({ rooms, participants }: PrintReportProps) {
         </div>
       </div>
 
-      {/* 
-        ====================================================
-        OFFICIAL PRINT REPORT VIEW (Stylized for pristine Paper print & on-screen live simulation)
-        ====================================================
-      */}
       <div
         id="printable-report-capture"
         className="bg-white text-slate-900 p-8 border border-slate-300 rounded-lg max-w-4xl mx-auto font-sans leading-normal relative shadow-xs"
       >
-        {/* Custom watermark / header details */}
         <div className="flex justify-between items-start border-b-2 border-slate-900 pb-4 mb-6">
           <div>
             <h1 className="text-xl font-extrabold tracking-tight text-slate-900 uppercase">{reportTitle}</h1>
@@ -192,7 +171,6 @@ export default function PrintReport({ rooms, participants }: PrintReportProps) {
           </div>
         </div>
 
-        {/* Custom Instructions */}
         {reportNotes && (
           <div className="mb-6 p-3 bg-slate-50 border border-slate-200 rounded text-xs leading-relaxed text-slate-700 italic">
             <span className="font-bold text-slate-900 not-italic block mb-0.5">⚠️ Notice for Hosts & Guests:</span>"
@@ -200,7 +178,6 @@ export default function PrintReport({ rooms, participants }: PrintReportProps) {
           </div>
         )}
 
-        {/* --- OPTION 1: GROUPED BY ROOM NUMBER --- */}
         {sortBy === 'room' && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -213,7 +190,6 @@ export default function PrintReport({ rooms, participants }: PrintReportProps) {
                     key={room.id}
                     className="border-2 border-slate-900 rounded-lg p-4 flex flex-col space-y-3 bg-white hover:shadow-xs break-inside-avoid"
                   >
-                    {/* Room title banner */}
                     <div className="flex items-center justify-between border-b border-slate-350 pb-2">
                       <span className="font-extrabold text-base text-slate-900">{room.id}</span>
                       <span className="text-[10px] uppercase font-bold text-slate-550 border border-slate-300 px-1.5 py-0.5 rounded">
@@ -221,9 +197,8 @@ export default function PrintReport({ rooms, participants }: PrintReportProps) {
                       </span>
                     </div>
 
-                    {/* Bed-occupant listing table */}
                     <div className="space-y-2">
-                      {room.beds.map((bed, idx) => {
+                      {room.beds.map((bed) => {
                         const guest = bed.assignedParticipantId
                           ? participants.find((p) => p.id === bed.assignedParticipantId)
                           : null
@@ -244,7 +219,6 @@ export default function PrintReport({ rooms, participants }: PrintReportProps) {
                       })}
                     </div>
 
-                    {/* Co-share notes in the room */}
                     {room.beds.some((b) => {
                       const p = participants.find((part) => part.id === b.assignedParticipantId)
                       return p?.sharingPreferences
@@ -271,7 +245,6 @@ export default function PrintReport({ rooms, participants }: PrintReportProps) {
           </div>
         )}
 
-        {/* --- OPTION 2: ALPHABETICAL BY GUEST NAME --- */}
         {sortBy === 'guest' && (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
@@ -320,7 +293,6 @@ export default function PrintReport({ rooms, participants }: PrintReportProps) {
           </div>
         )}
 
-        {/* Footer Page count block */}
         <div className="mt-8 pt-4 border-t border-slate-300 flex justify-between items-center text-[10px] text-slate-400 font-mono">
           <span>Event Services Coordinator</span>
           <span>End of Report • Page 1 of 1</span>
