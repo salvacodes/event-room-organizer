@@ -44,47 +44,53 @@ describe('autoAllocate', () => {
     localStorage.clear()
   })
 
-  it('sets autoAllocateResult.matchesCount when guests are assigned', () => {
-    const rooms = [makeRoom('Room A', 'Standard', ['single bed'])]
-    const participants = [makeParticipant('p1', 'Standard', 'single bed')]
-    resetStore(rooms, participants)
-    useWorkspaceStore.getState().autoAllocate()
-    expect(useWorkspaceStore.getState().autoAllocateResult).toEqual({ matchesCount: 1 })
+  describe('when there are matches', () => {
+    it('sets autoAllocateResult.matchesCount when guests are assigned', () => {
+      const rooms = [makeRoom('Room A', 'Standard', ['single bed'])]
+      const participants = [makeParticipant('p1', 'Standard', 'single bed')]
+      resetStore(rooms, participants)
+      useWorkspaceStore.getState().autoAllocate()
+      expect(useWorkspaceStore.getState().autoAllocateResult).toEqual({ matchesCount: 1 })
+    })
+
+    it('increments history when guests are assigned', () => {
+      const rooms = [makeRoom('Room A', 'Standard', ['single bed'])]
+      const participants = [makeParticipant('p1', 'Standard', 'single bed')]
+      resetStore(rooms, participants)
+      useWorkspaceStore.getState().autoAllocate()
+      expect(useWorkspaceStore.getState().historyIndex).toBe(1)
+      expect(useWorkspaceStore.getState().history).toHaveLength(2)
+    })
   })
 
-  it('increments history when guests are assigned', () => {
-    const rooms = [makeRoom('Room A', 'Standard', ['single bed'])]
-    const participants = [makeParticipant('p1', 'Standard', 'single bed')]
-    resetStore(rooms, participants)
-    useWorkspaceStore.getState().autoAllocate()
-    expect(useWorkspaceStore.getState().historyIndex).toBe(1)
-    expect(useWorkspaceStore.getState().history).toHaveLength(2)
+  describe('when there are no matches', () => {
+    it('sets autoAllocateResult.matchesCount to 0 when no guests match', () => {
+      const rooms = [makeRoom('Room A', 'Standard', ['single bed'])]
+      const participants = [makeParticipant('p1', 'Deluxe', 'double bed (shared)')]
+      resetStore(rooms, participants)
+      useWorkspaceStore.getState().autoAllocate()
+      expect(useWorkspaceStore.getState().autoAllocateResult).toEqual({ matchesCount: 0 })
+    })
+
+    it('does not modify history when no guests match', () => {
+      const rooms = [makeRoom('Room A', 'Standard', ['single bed'])]
+      const participants = [makeParticipant('p1', 'Deluxe', 'double bed (shared)')]
+      resetStore(rooms, participants)
+      useWorkspaceStore.getState().autoAllocate()
+      expect(useWorkspaceStore.getState().historyIndex).toBe(0)
+      expect(useWorkspaceStore.getState().history).toHaveLength(1)
+    })
   })
 
-  it('sets autoAllocateResult.matchesCount to 0 when no guests match', () => {
-    const rooms = [makeRoom('Room A', 'Standard', ['single bed'])]
-    const participants = [makeParticipant('p1', 'Deluxe', 'double bed (shared)')]
-    resetStore(rooms, participants)
-    useWorkspaceStore.getState().autoAllocate()
-    expect(useWorkspaceStore.getState().autoAllocateResult).toEqual({ matchesCount: 0 })
-  })
-
-  it('does not modify history when no guests match', () => {
-    const rooms = [makeRoom('Room A', 'Standard', ['single bed'])]
-    const participants = [makeParticipant('p1', 'Deluxe', 'double bed (shared)')]
-    resetStore(rooms, participants)
-    useWorkspaceStore.getState().autoAllocate()
-    expect(useWorkspaceStore.getState().historyIndex).toBe(0)
-    expect(useWorkspaceStore.getState().history).toHaveLength(1)
-  })
-
-  it('clearAutoAllocateResult sets autoAllocateResult to null', () => {
-    const rooms = [makeRoom('Room A', 'Standard', ['single bed'])]
-    const participants = [makeParticipant('p1', 'Standard', 'single bed')]
-    resetStore(rooms, participants)
-    useWorkspaceStore.getState().autoAllocate()
-    useWorkspaceStore.getState().clearAutoAllocateResult()
-    expect(useWorkspaceStore.getState().autoAllocateResult).toBeNull()
+  describe('clearAutoAllocateResult', () => {
+    it('sets autoAllocateResult to null', () => {
+      const rooms = [makeRoom('Room A', 'Standard', ['single bed'])]
+      const participants = [makeParticipant('p1', 'Standard', 'single bed')]
+      resetStore(rooms, participants)
+      useWorkspaceStore.getState().autoAllocate()
+      useWorkspaceStore.getState().clearAutoAllocateResult()
+      expect(useWorkspaceStore.getState().autoAllocateResult).toBeNull()
+    })
   })
 })
 
