@@ -27,6 +27,7 @@ export default function AllocationBoard() {
           </div>
           <div className="items-center gap-2 hidden lg:flex flex-shrink-0">
             <button
+              type="button"
               id="header-auto-allocate-btn"
               onClick={autoAllocate}
               className="px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-lg border border-indigo-150 transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
@@ -36,6 +37,7 @@ export default function AllocationBoard() {
               Auto-Allocate Beds
             </button>
             <button
+              type="button"
               id="header-clear-all-btn"
               onClick={resetAllocations}
               className="px-3.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-lg border border-rose-150 transition-all flex items-center gap-1.5 cursor-pointer"
@@ -64,6 +66,7 @@ export default function AllocationBoard() {
               </p>
             </div>
             <button
+              type="button"
               onClick={clearAssignError}
               className="absolute top-3.5 right-4 text-[10px] uppercase font-bold text-rose-600 hover:text-rose-800 bg-white hover:bg-rose-100/50 rounded-md px-2.5 py-1 transition-colors border border-rose-150 cursor-pointer shadow-2xs"
             >

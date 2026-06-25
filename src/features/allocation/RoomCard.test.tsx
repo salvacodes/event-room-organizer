@@ -1,10 +1,18 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import type { Room } from '../../shared/types'
+import type { Participant, Room } from '../../shared/types'
+
 import RoomCard from './RoomCard'
 
+type MockState = {
+  participants: Participant[]
+  draggedParticipant: Participant | null
+  assignParticipant: () => void
+  removeAssignment: () => void
+}
+
 vi.mock('../../store/useWorkspaceStore', () => ({
-  useWorkspaceStore: vi.fn().mockImplementation((selector: (s: any) => any) =>
+  useWorkspaceStore: vi.fn().mockImplementation((selector: (s: MockState) => unknown) =>
     selector({
       participants: [],
       draggedParticipant: null,

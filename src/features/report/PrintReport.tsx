@@ -1,5 +1,5 @@
-import { CheckSquare, FileSpreadsheet, Info, LayoutGrid, Printer, Search } from 'lucide-react'
-import React, { useMemo, useState } from 'react'
+import { Printer, Search } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import { useWorkspaceStore } from '../../store/useWorkspaceStore'
 
 export default function PrintReport() {
@@ -71,6 +71,7 @@ export default function PrintReport() {
             </p>
           </div>
           <button
+            type="button"
             id="trigger-print-now-btn"
             onClick={handlePrint}
             className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-lg shadow-md transition-colors flex items-center justify-center gap-2 cursor-pointer self-start md:self-auto"
@@ -82,7 +83,9 @@ export default function PrintReport() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-150">
           <div className="flex flex-col space-y-1.5">
-            <label className="text-xs font-bold text-slate-600 uppercase tracking-wide">Report Header Title</label>
+            <label htmlFor="report-custom-title" className="text-xs font-bold text-slate-600 uppercase tracking-wide">
+              Report Header Title
+            </label>
             <input
               id="report-custom-title"
               type="text"
@@ -93,7 +96,7 @@ export default function PrintReport() {
           </div>
 
           <div className="flex flex-col space-y-1.5">
-            <label className="text-xs font-bold text-slate-600 uppercase tracking-wide">
+            <label htmlFor="report-custom-notes" className="text-xs font-bold text-slate-600 uppercase tracking-wide">
               Printable Footer Instructions
             </label>
             <input
@@ -106,9 +109,10 @@ export default function PrintReport() {
           </div>
 
           <div className="flex flex-col space-y-1.5">
-            <label className="text-xs font-bold text-slate-600 uppercase tracking-wide">Handout Layout Format</label>
+            <span className="text-xs font-bold text-slate-600 uppercase tracking-wide">Handout Layout Format</span>
             <div className="grid grid-cols-2 gap-1 bg-white p-1 border border-slate-150 rounded">
               <button
+                type="button"
                 id="sort-by-room-tab"
                 onClick={() => setSortBy('room')}
                 className={`py-1 text-center font-bold text-[11px] rounded transition-all cursor-pointer ${
@@ -120,6 +124,7 @@ export default function PrintReport() {
                 📝 Grouped by Rooms
               </button>
               <button
+                type="button"
                 id="sort-by-guest-tab"
                 onClick={() => setSortBy('guest')}
                 className={`py-1 text-center font-bold text-[11px] rounded transition-all cursor-pointer ${
@@ -182,8 +187,8 @@ export default function PrintReport() {
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {roomRecords.map((room) => {
-                const totalBeds = room.beds.length
-                const assignedCount = room.beds.filter((b) => b.assignedParticipantId).length
+                const _totalBeds = room.beds.length
+                const _assignedCount = room.beds.filter((b) => b.assignedParticipantId).length
 
                 return (
                   <div
@@ -229,7 +234,7 @@ export default function PrintReport() {
                         </span>
                         {room.beds.map((b) => {
                           const p = participants.find((part) => part.id === b.assignedParticipantId)
-                          if (!p || !p.sharingPreferences) return null
+                          if (!p?.sharingPreferences) return null
                           return (
                             <div key={p.id} className="text-[9px] text-slate-600 leading-normal mt-0.5">
                               <strong className="text-slate-700">{p.name}:</strong> "{p.sharingPreferences}"

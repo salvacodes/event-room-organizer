@@ -1,4 +1,4 @@
-import { AlertCircle, Check, Eye, EyeOff, Search, UserPlus, Users } from 'lucide-react'
+import { Search, UserPlus, Users } from 'lucide-react'
 import type React from 'react'
 import { useMemo, useState } from 'react'
 import type { Participant } from '../../shared/types'
@@ -42,7 +42,7 @@ export default function ParticipantPool() {
       const matchesSearch =
         p.name.toLowerCase().includes(term) ||
         p.sharingPreferences.toLowerCase().includes(term) ||
-        (p.requestedRoomType && p.requestedRoomType.toLowerCase().includes(term))
+        p.requestedRoomType?.toLowerCase().includes(term)
       const matchesStatus =
         statusFilter === 'all' ||
         (statusFilter === 'unassigned' && !p.assignedRoomId) ||
@@ -112,12 +112,17 @@ export default function ParticipantPool() {
 
         <div className="grid grid-cols-2 gap-2">
           <div className="flex flex-col space-y-1">
-            <label className="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Status</label>
+            <label
+              htmlFor="status-filter-select"
+              className="text-[10px] font-bold text-slate-450 uppercase tracking-wider"
+            >
+              Status
+            </label>
             <select
               id="status-filter-select"
               value={statusFilter}
               onChange={(e) => {
-                setStatusFilter(e.target.value as any)
+                setStatusFilter(e.target.value as 'unassigned' | 'assigned' | 'all')
                 setSelectedForQuickAssign(null)
               }}
               className="text-xs py-1.5 px-2 border border-slate-200 rounded-md bg-slate-55 text-slate-600 focus:outline-hidden focus:ring-1 focus:ring-indigo-500 font-medium cursor-pointer"
@@ -129,7 +134,12 @@ export default function ParticipantPool() {
           </div>
 
           <div className="flex flex-col space-y-1">
-            <label className="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Preferred Room</label>
+            <label
+              htmlFor="room-pref-filter-select"
+              className="text-[10px] font-bold text-slate-450 uppercase tracking-wider"
+            >
+              Preferred Room
+            </label>
             <select
               id="room-pref-filter-select"
               value={roomPrefFilter}
@@ -175,6 +185,7 @@ export default function ParticipantPool() {
               : getCardBorderLeft(participant.requestedBedType)
 
             return (
+              // biome-ignore lint/a11y/noStaticElementInteractions: draggable participant card
               <div
                 key={participant.id}
                 id={`participant-${participant.id}`}
@@ -230,6 +241,7 @@ export default function ParticipantPool() {
                 <div className="flex items-center gap-2 pt-1 border-t border-slate-50">
                   {isAssigned ? (
                     <button
+                      type="button"
                       onClick={() => removeAssignment(participant.id)}
                       className="text-[10px] text-rose-600 hover:text-rose-700 font-semibold flex items-center gap-1 py-1 cursor-pointer"
                     >
@@ -238,6 +250,7 @@ export default function ParticipantPool() {
                   ) : (
                     <div className="w-full">
                       <button
+                        type="button"
                         onClick={() => setSelectedForQuickAssign(isQuickAssignOpen ? null : participant.id)}
                         className="text-[10px] bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-2 py-1 rounded flex items-center gap-1 transition-all cursor-pointer"
                       >
@@ -250,6 +263,7 @@ export default function ParticipantPool() {
                           <div className="flex items-center justify-between border-b pb-1.5">
                             <span className="font-bold text-slate-700">Select Available Bed:</span>
                             <button
+                              type="button"
                               onClick={() => setSelectedForQuickAssign(null)}
                               className="text-[10px] text-slate-400 hover:text-slate-600"
                             >
@@ -284,6 +298,7 @@ export default function ParticipantPool() {
                               <div className="space-y-1">
                                 {matchingBeds.map((bed) => (
                                   <button
+                                    type="button"
                                     key={bed.bedId}
                                     onClick={() => {
                                       assignParticipant(participant.id, bed.roomId, bed.bedId)

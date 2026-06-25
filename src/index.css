@@ -48,12 +48,12 @@
   html,
   body,
   #root {
-    background: #ffffff !important;
-    color: #000000 !important;
-    font-size: 11pt !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    height: auto !important;
+    background: #ffffff;
+    color: #000000;
+    font-size: 11pt;
+    margin: 0;
+    padding: 0;
+    height: auto;
   }
 
   /* Hide screen headers, navigations, sidebars, editors and previews */
@@ -66,34 +66,34 @@
   [id^="unassign-"],
   .group\/bed span,
   button {
-    display: none !important;
+    display: none;
   }
 
   /* 2. Show ONLY the dedicated compile sheets */
   #print-report-module {
-    border: none !important;
-    box-shadow: none !important;
-    background: transparent !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 100% !important;
-    display: block !important;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    display: block;
   }
 
   /* Ensure report is presented flawlessly */
   #printable-report-capture {
-    box-shadow: none !important;
-    border: none !important;
-    padding: 0 !important;
-    max-width: 100% !important;
-    width: 100% !important;
-    margin: 0 !important;
+    box-shadow: none;
+    border: none;
+    padding: 0;
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
   }
 
   /* Force page breaks neatly inside grids to avoid half-rooms being truncated */
   .break-inside-avoid {
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
   }
 
   /* Set page margins */

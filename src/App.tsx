@@ -59,6 +59,7 @@ export default function App() {
 
             <div className="flex items-center bg-slate-800 border border-slate-700 p-1 rounded-lg">
               <button
+                type="button"
                 id="undo-btn"
                 onClick={undo}
                 disabled={historyIndex <= 0}
@@ -69,6 +70,7 @@ export default function App() {
               </button>
               <div className="h-4 w-px bg-slate-700 mx-1" />
               <button
+                type="button"
                 id="redo-btn"
                 onClick={redo}
                 disabled={historyIndex >= historyLength - 1}
@@ -89,6 +91,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center py-3 space-x-1.5">
             <button
+              type="button"
               id="tab-csv-selector"
               onClick={() => setActiveTab('csv')}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
@@ -102,6 +105,7 @@ export default function App() {
             </button>
 
             <button
+              type="button"
               id="tab-board-selector"
               onClick={() => setActiveTab('board')}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
@@ -115,6 +119,7 @@ export default function App() {
             </button>
 
             <button
+              type="button"
               id="tab-report-selector"
               onClick={() => setActiveTab('report')}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${

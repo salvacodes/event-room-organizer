@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle, FileText, HelpCircle, RefreshCw, Upload } from 'lucide-react'
+import { AlertTriangle, CheckCircle, HelpCircle, RefreshCw, Upload } from 'lucide-react'
 import type React from 'react'
 import { useState } from 'react'
 import type { Participant, Room } from '../../shared/types'
@@ -113,8 +113,8 @@ export default function CsvImport() {
       setSuccessMsg(
         `Successfully loaded ${parsedRooms.length} Rooms and ${parsedParticipants.length} Participants to the allocation board!`
       )
-    } catch (err: any) {
-      setErrorMsg(err.message || 'An unexpected parsing error occurred.')
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : 'An unexpected parsing error occurred.')
     }
   }
 
@@ -149,7 +149,10 @@ export default function CsvImport() {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <div className="flex flex-col space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+            <label
+              htmlFor="raw-rooms-csv-editor"
+              className="text-sm font-semibold text-slate-700 flex items-center gap-1.5"
+            >
               <span className="bg-amber-100 text-amber-800 text-xs w-5 h-5 flex items-center justify-center rounded-full font-mono">
                 1
               </span>
@@ -177,7 +180,10 @@ export default function CsvImport() {
 
         <div className="flex flex-col space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+            <label
+              htmlFor="raw-registrants-csv-editor"
+              className="text-sm font-semibold text-slate-700 flex items-center gap-1.5"
+            >
               <span className="bg-teal-100 text-teal-800 text-xs w-5 h-5 flex items-center justify-center rounded-full font-mono">
                 2
               </span>
@@ -257,6 +263,7 @@ export default function CsvImport() {
 
         <div className="flex items-center gap-3 self-stretch md:self-auto">
           <button
+            type="button"
             id="apply-csv-data-btn"
             onClick={handleProcess}
             className="flex-1 md:flex-none px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-sm transition-all shadow-md active:scale-98 flex items-center justify-center gap-2 cursor-pointer"

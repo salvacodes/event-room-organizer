@@ -18,7 +18,7 @@ export default function RoomCard({ room }: RoomCardProps) {
   const [isDragOver, setIsDragOver] = useState(false)
   const [activeDragBedId, setActiveDragBedId] = useState<string | null>(null)
 
-  const roomOccupants = participants.filter((p) => p.assignedRoomId === room.id)
+  const _roomOccupants = participants.filter((p) => p.assignedRoomId === room.id)
   const totalBedsCount = room.beds.length
   const occupiedBedsCount = room.beds.filter((b) => !!b.assignedParticipantId).length
   const isFull = occupiedBedsCount >= totalBedsCount
@@ -86,6 +86,7 @@ export default function RoomCard({ room }: RoomCardProps) {
   }
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: drag-and-drop drop target
     <div
       id={`room-card-${room.id}`}
       onDragOver={handleDragOverCard}
@@ -143,14 +144,12 @@ export default function RoomCard({ room }: RoomCardProps) {
           const isBedDragTarget = activeDragBedId === bed.id
 
           const hasRoomCategoryMismatch =
-            occupant &&
-            occupant.requestedRoomType &&
+            occupant?.requestedRoomType &&
             !room.category.toLowerCase().includes(occupant.requestedRoomType.toLowerCase()) &&
             !occupant.requestedRoomType.toLowerCase().includes(room.category.toLowerCase())
 
           const hasBedTypeMismatch =
-            occupant &&
-            occupant.requestedBedType &&
+            occupant?.requestedBedType &&
             !bed.type.toLowerCase().includes(occupant.requestedBedType.toLowerCase()) &&
             !occupant.requestedBedType.toLowerCase().includes(bed.type.toLowerCase())
 
@@ -191,6 +190,7 @@ export default function RoomCard({ room }: RoomCardProps) {
           }
 
           return (
+            // biome-ignore lint/a11y/noStaticElementInteractions: drag-and-drop drop target
             <div
               key={bed.id}
               id={`bed-slot-${bed.id}`}
@@ -244,6 +244,7 @@ export default function RoomCard({ room }: RoomCardProps) {
               <div>
                 {occupant ? (
                   <button
+                    type="button"
                     id={`unassign-${bed.id}`}
                     onClick={() => removeAssignment(occupant.id)}
                     className="p-1 text-slate-400 hover:text-rose-600 transition-colors rounded-sm hover:bg-rose-50 cursor-pointer"
