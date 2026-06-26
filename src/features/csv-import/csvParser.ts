@@ -2,6 +2,16 @@ import type { BedType } from '../../shared/bedTypes'
 import { getBedTypeLabel } from '../../shared/bedTypes'
 import type { Bed } from '../../shared/types'
 
+export class ParseError extends Error {
+  constructor(
+    public readonly translationKey: string,
+    public readonly params?: Record<string, string | number>
+  ) {
+    super(translationKey)
+    this.name = 'ParseError'
+  }
+}
+
 const VALID_BED_TYPES: ReadonlySet<string> = new Set<BedType>(['single', 'double_single', 'double_shared'])
 
 function isBedType(value: string): value is BedType {
@@ -69,7 +79,7 @@ export function parseBedConfiguration(configStr: string, roomId: string): Bed[] 
 
   for (const [, countStr, key] of pairs) {
     if (!isBedType(key)) {
-      throw new Error(`Unknown bed type: "${key}". Valid types are: single, double_single, double_shared`)
+      throw new ParseError('errors.unknownBedType', { type: key })
     }
     const count = parseInt(countStr, 10)
 

@@ -1,11 +1,41 @@
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import i18n from 'i18next'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useWorkspaceStore } from '../../store/useWorkspaceStore'
 import ParticipantPool from './ParticipantPool'
 
 vi.mock('../../store/useWorkspaceStore', () => ({
   useWorkspaceStore: vi.fn()
 }))
+
+beforeEach(() => {
+  i18n.addResourceBundle(
+    'en',
+    'allocation',
+    {
+      pool: {
+        title: 'Guests Registry Pool',
+        searchPlaceholder: 'Search by name, room choice, shared notes...',
+        roomTypeLabel: 'Room Type',
+        allRoomTypes: 'All room types',
+        emptyTitle: 'No matching guests found',
+        emptyFilteredHint: 'Try clearing filters or search queries above.',
+        emptyAllAssignedHint: 'All guests have already been assigned to rooms!',
+        tip: 'Pick up any guest card and drag them directly into the designated bed circles in the room cards.',
+        quickAllocate: 'Quick Allocate Bed...',
+        selectAvailableBed: 'Select Available Bed:',
+        close: 'Close',
+        noVacantSlots: 'No vacant slots available matching:',
+        noVacantCategory: '🏨 Category {{types}}',
+        noVacantBed: '🛏️ Configuration {{bedType}}',
+        sharingDetails: 'Preference & Share details:'
+      }
+    },
+    true,
+    true
+  )
+  i18n.changeLanguage('en')
+})
 
 const unassigned = {
   id: 'p1',

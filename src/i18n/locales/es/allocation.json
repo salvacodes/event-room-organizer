@@ -1,0 +1,56 @@
+{
+  "board": {
+    "title": "Arrastra y Suelta para Asignar",
+    "subtitle": "Arrastra huéspedes del panel lateral y suéltalos en las plazas de cama disponibles. Solo se permiten camas que coincidan exactamente con el tipo de habitación y configuración de cama solicitados.",
+    "undoTitle": "Deshacer paso de asignación",
+    "redoTitle": "Rehacer paso de asignación",
+    "autoAllocate": "Asignación Automática",
+    "autoAllocateTitle": "Ejecutar modelo de coincidencia para asignar camas vacantes",
+    "reset": "Reiniciar",
+    "resetTitle": "Eliminar todas las asignaciones",
+    "dismiss": "Descartar",
+    "errorTitle": "Restricción de Destino No Permitido",
+    "errorHint": "Pista: Revisa las etiquetas preferidas en la tarjeta del huésped. ¡Cada huésped debe asignarse según sus selecciones específicas de habitación y tipo de cama!",
+    "emptyTitle": "No se ha cargado ninguna configuración de habitaciones",
+    "emptySubtitle": "Para comenzar a distribuir asistentes en camas, configura tu lista de habitaciones en la pestaña \"Habitaciones e Inscripciones\"."
+  },
+  "resetModal": {
+    "title": "¿Reiniciar tablero?",
+    "message": "Se borrarán todas las asignaciones de camas actuales. Los datos de los participantes se conservarán, pero todos volverán a la lista sin asignar.",
+    "confirm": "Reiniciar"
+  },
+  "toast": {
+    "successMessage": "¡Asignación automática completada! Se asignaron {{count}} huéspedes.",
+    "noMatchesMessage": "No se encontraron coincidencias. Ninguna cama vacante coincide con las preferencias de los huéspedes sin asignar."
+  },
+  "pool": {
+    "title": "Pool de Registro de Huéspedes",
+    "searchPlaceholder": "Buscar por nombre, elección de habitación, notas compartidas...",
+    "roomTypeLabel": "Tipo de Habitación",
+    "allRoomTypes": "Todos los tipos de habitación",
+    "emptyTitle": "No se encontraron huéspedes",
+    "emptyFilteredHint": "Intenta limpiar los filtros o las búsquedas.",
+    "emptyAllAssignedHint": "¡Todos los huéspedes ya han sido asignados a habitaciones!",
+    "tip": "Toma la tarjeta de cualquier huésped y arrástrala directamente a los círculos de cama en las tarjetas de habitación.",
+    "quickAllocate": "Asignación Rápida de Cama...",
+    "selectAvailableBed": "Seleccionar Cama Disponible:",
+    "close": "Cerrar",
+    "noVacantSlots": "No hay plazas vacantes disponibles para:",
+    "noVacantCategory": "🏨 Categoría {{types}}",
+    "noVacantBed": "🛏️ Configuración {{bedType}}",
+    "sharingDetails": "Preferencias y detalles de compartición:"
+  },
+  "roomCard": {
+    "bedsOccupied": "{{occupied}} / {{total}} Camas Ocupadas",
+    "full": "COMPLETO",
+    "emptySlot": "Plaza Vacía",
+    "dropHere": "Soltar Aquí",
+    "unassignTitle": "Desasignar ocupante",
+    "mismatchTitle": "Desajuste de Asignación:",
+    "mismatchRoom": "Habitación Solicitada: {{types}}",
+    "mismatchBed": "Cama Solicitada: {{type}}"
+  },
+  "errors": {
+    "assignmentBlocked": "Asignación bloqueada: \"{{name}}\" solicitó Categoría [{{requestedRoom}}] y Config. de Cama [{{requestedBed}}]. Intentaste colocarlo en Categoría [{{actualRoom}}] y Config. de Cama [{{actualBed}}]."
+  }
+}

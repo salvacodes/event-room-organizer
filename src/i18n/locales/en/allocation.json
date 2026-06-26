@@ -1,0 +1,56 @@
+{
+  "board": {
+    "title": "Drag & Drop to Allocate",
+    "subtitle": "Drag guests from the sidebar pool and drop them onto unoccupied bed slots below. Only beds that match their exact requested room type and bed configuration are permitted.",
+    "undoTitle": "Undo mapping step",
+    "redoTitle": "Redo mapping step",
+    "autoAllocate": "Auto-Allocate",
+    "autoAllocateTitle": "Run matching model to auto-assign vacant beds",
+    "reset": "Reset",
+    "resetTitle": "Remove all allocations",
+    "dismiss": "Dismiss",
+    "errorTitle": "Permissible Target Limit Restriction",
+    "errorHint": "Hint: Check their preferred tags on their guest card. Each guest must be allocated according to their specific room and bed type selections!",
+    "emptyTitle": "No rooms configuration loaded",
+    "emptySubtitle": "To start distributing attendees on beds, set up your Event Rooms spreadsheet list inside the \"Rooms & Signups\" tab."
+  },
+  "resetModal": {
+    "title": "Reset Board?",
+    "message": "All current bed assignments will be cleared. Participant details will remain, but everyone will return to the unassigned list.",
+    "confirm": "Reset"
+  },
+  "toast": {
+    "successMessage": "Auto-allocation complete! {{count}} guests have been assigned.",
+    "noMatchesMessage": "No matches found. No vacant beds match any unassigned guest preferences."
+  },
+  "pool": {
+    "title": "Guests Registry Pool",
+    "searchPlaceholder": "Search by name, room choice, shared notes...",
+    "roomTypeLabel": "Room Type",
+    "allRoomTypes": "All room types",
+    "emptyTitle": "No matching guests found",
+    "emptyFilteredHint": "Try clearing filters or search queries above.",
+    "emptyAllAssignedHint": "All guests have already been assigned to rooms!",
+    "tip": "Pick up any guest card and drag them directly into the designated bed circles in the room cards.",
+    "quickAllocate": "Quick Allocate Bed...",
+    "selectAvailableBed": "Select Available Bed:",
+    "close": "Close",
+    "noVacantSlots": "No vacant slots available matching:",
+    "noVacantCategory": "🏨 Category {{types}}",
+    "noVacantBed": "🛏️ Configuration {{bedType}}",
+    "sharingDetails": "Preference & Share details:"
+  },
+  "roomCard": {
+    "bedsOccupied": "{{occupied}} / {{total}} Beds Occupied",
+    "full": "FULL",
+    "emptySlot": "Empty Slot",
+    "dropHere": "Drop Here",
+    "unassignTitle": "Unassign occupant",
+    "mismatchTitle": "Allocation Mismatch:",
+    "mismatchRoom": "Requested Room: {{types}}",
+    "mismatchBed": "Requested Bed: {{type}}"
+  },
+  "errors": {
+    "assignmentBlocked": "Assignment Blocked: \"{{name}}\" requested Room Category [{{requestedRoom}}] and Bed Config [{{requestedBed}}]. You attempted to place them in a Room of Category [{{actualRoom}}] and Bed Config [{{actualBed}}]."
+  }
+}

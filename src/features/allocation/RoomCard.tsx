@@ -1,6 +1,7 @@
 import { useDroppable } from '@dnd-kit/core'
 import { AlertTriangle, CheckCircle, Trash2 } from 'lucide-react'
 import type React from 'react'
+import { useTranslation } from 'react-i18next'
 import type { Bed, Participant, Room } from '../../shared/types'
 import { useWorkspaceStore } from '../../store/useWorkspaceStore'
 
@@ -25,6 +26,7 @@ function BedSlot({
   occupant,
   onRemove
 }: BedSlotProps) {
+  const { t } = useTranslation('allocation')
   const isBedCompatible = draggedParticipant ? draggedParticipant.requestedBedType === bed.type : true
   const isOverallCompatible = isRoomCompatible && isBedCompatible
 
@@ -90,16 +92,17 @@ function BedSlot({
                 <div className="relative group/warn flex-shrink-0">
                   <AlertTriangle className="w-3.5 h-3.5 text-amber-500 cursor-help" />
                   <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-1.5 hidden group-hover/warn:block w-48 p-2 bg-slate-900 border border-slate-800 text-[10px] text-slate-250 rounded-lg shadow-md z-30 leading-normal pointer-events-none">
-                    <span className="font-bold text-amber-400 block mb-0.5">Allocation Mismatch:</span>
-                    {hasRoomCategoryMismatch && `• Requested Room: ${occupant.requestedRoomType.join(' / ')}`}
+                    <span className="font-bold text-amber-400 block mb-0.5">{t('roomCard.mismatchTitle')}</span>
+                    {hasRoomCategoryMismatch &&
+                      `• ${t('roomCard.mismatchRoom', { types: occupant.requestedRoomType.join(' / ') })}`}
                     {hasRoomCategoryMismatch && hasBedTypeMismatch && <br />}
-                    {hasBedTypeMismatch && `• Requested Bed: ${occupant.requestedBedType}`}
+                    {hasBedTypeMismatch && `• ${t('roomCard.mismatchBed', { type: occupant.requestedBedType })}`}
                   </div>
                 </div>
               )}
             </div>
           ) : (
-            <span className="text-xs text-slate-400 italic mt-0.5">Empty Slot</span>
+            <span className="text-xs text-slate-400 italic mt-0.5">{t('roomCard.emptySlot')}</span>
           )}
         </div>
       </div>
@@ -111,13 +114,13 @@ function BedSlot({
             id={`unassign-${bed.id}`}
             onClick={onRemove}
             className="p-1 text-slate-400 hover:text-rose-600 transition-colors rounded-sm hover:bg-rose-50 cursor-pointer"
-            title="Unassign occupant"
+            title={t('roomCard.unassignTitle')}
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
         ) : (
           <span className="text-[9px] font-extrabold text-slate-400 bg-slate-100 border border-slate-200 py-0.5 px-1.5 rounded-sm select-none uppercase tracking-wide group-hover/bed:bg-indigo-50/50 group-hover/bed:text-indigo-600 group-hover/bed:border-indigo-100">
-            Drop Here
+            {t('roomCard.dropHere')}
           </span>
         )}
       </div>
@@ -131,6 +134,7 @@ interface RoomCardProps {
 }
 
 export default function RoomCard({ room }: RoomCardProps) {
+  const { t } = useTranslation('allocation')
   const participants = useWorkspaceStore((s) => s.participants)
   const draggedParticipant = useWorkspaceStore((s) => s.draggedParticipant)
   const removeAssignment = useWorkspaceStore((s) => s.removeAssignment)
@@ -187,7 +191,7 @@ export default function RoomCard({ room }: RoomCardProps) {
 
         <div className="mt-2 text-[10px] text-slate-400 flex items-center gap-2">
           <span className="font-semibold text-slate-600 font-mono">
-            {occupiedBedsCount} / {totalBedsCount} Beds Occupied
+            {t('roomCard.bedsOccupied', { occupied: occupiedBedsCount, total: totalBedsCount })}
           </span>
           <div className="flex-1 max-w-[120px] h-1.5 bg-slate-100 rounded-full overflow-hidden">
             <div
@@ -199,7 +203,7 @@ export default function RoomCard({ room }: RoomCardProps) {
           </div>
           {isFull && (
             <span className="text-emerald-700 font-bold text-[9px] flex items-center gap-0.5 whitespace-nowrap bg-emerald-50 px-1 rounded border border-emerald-150">
-              <CheckCircle className="w-2.5 h-2.5" /> FULL
+              <CheckCircle className="w-2.5 h-2.5" /> {t('roomCard.full')}
             </span>
           )}
         </div>
@@ -220,7 +224,7 @@ export default function RoomCard({ room }: RoomCardProps) {
               isRoomCompatible={isRoomCompatible}
               isFull={isFull}
               occupant={occupant}
-              onRemove={() => removeAssignment(occupant!.id)}
+              onRemove={() => removeAssignment(occupant?.id ?? '')}
             />
           )
         })}

@@ -1,0 +1,35 @@
+{
+  "title": "Configuración de Datos CSV",
+  "subtitle": "Pega datos CSV o sube archivos, luego haz clic en Procesar para cargar en el espacio de trabajo.",
+  "rooms": {
+    "label": "Lista de Habitaciones (formato CSV)",
+    "uploadFile": "Subir archivo .csv",
+    "count": "{{count}} Habitaciones"
+  },
+  "registrants": {
+    "label": "Registrantes e Inscripciones (formato CSV)",
+    "uploadFile": "Subir archivo .csv",
+    "count": "{{count}} Registrantes"
+  },
+  "processButton": "Procesar y Cargar Listas",
+  "columnGuide": {
+    "title": "Guía de Formato y Mapeo de Columnas CSV",
+    "bedRulesTitle": "Reglas de Configuración de Camas:",
+    "singleDesc": "(Individual/Litera, cap=1)",
+    "doubleSingleDesc": "(uso individual, cap=1)",
+    "doubleSharedDesc": "(2 plazas)",
+    "registrantColumnsTitle": "Columnas de Registrantes:",
+    "registrantColumnsDetail": "Necesita <code>Name</code>. La cama preferida se asigna a una configuración; la habitación preferida coincide con el Tipo de Habitación (p. ej., <code>Standard</code>)."
+  },
+  "success": "¡Se cargaron exitosamente {{rooms}} Habitaciones y {{participants}} Participantes en el tablero de asignación!",
+  "errors": {
+    "roomsMinRows": "El CSV de habitaciones debe tener al menos una cabecera y una fila de datos.",
+    "roomsMissingRoomColumn": "El CSV de habitaciones requiere una columna llamada 'Room' o 'Room ID'.",
+    "roomsMissingBedColumn": "El CSV de habitaciones requiere una columna llamada 'Bed Configuration' o 'Beds'.",
+    "participantsMinRows": "El CSV de participantes debe tener al menos una cabecera y una fila de datos.",
+    "participantsMissingNameColumn": "El CSV de participantes requiere una columna llamada 'Guest Name', 'Attendee Name' o 'Name'.",
+    "noRoomsParsed": "No se pudieron analizar habitaciones. Revisa el formato.",
+    "unknownBedType": "Tipo de cama desconocido: \"{{type}}\"",
+    "unexpected": "Ocurrió un error de análisis inesperado."
+  }
+}

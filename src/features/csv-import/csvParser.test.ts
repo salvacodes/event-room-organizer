@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseBedConfiguration, parseRoomTypes } from './csvParser'
+import { ParseError, parseBedConfiguration, parseRoomTypes } from './csvParser'
 
 describe('parseBedConfiguration', () => {
   it('parses a single bed', () => {
@@ -51,8 +51,16 @@ describe('parseBedConfiguration', () => {
     expect(beds[1].label).toBe('Double Bed (Shared) - Slot B')
   })
 
-  it('throws a descriptive error for unknown bed type keys', () => {
-    expect(() => parseBedConfiguration('1 unknown', 'room1')).toThrow('Unknown bed type: "unknown"')
+  it('throws a ParseError with translation key for unknown bed type keys', () => {
+    let caught: unknown
+    try {
+      parseBedConfiguration('1 unknown', 'room1')
+    } catch (e) {
+      caught = e
+    }
+    expect(caught).toBeInstanceOf(ParseError)
+    expect((caught as ParseError).translationKey).toBe('errors.unknownBedType')
+    expect((caught as ParseError).params).toEqual({ type: 'unknown' })
   })
 
   it('returns empty array for empty string', () => {

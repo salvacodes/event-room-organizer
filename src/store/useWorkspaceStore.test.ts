@@ -170,6 +170,23 @@ describe('localStorage', () => {
   })
 })
 
+describe('assignParticipant error structure', () => {
+  it('sets a TranslatableError object when assignment is blocked by room type mismatch', () => {
+    const room = makeRoom('Room 3A', '3A', ['single'])
+    const participant = makeParticipant('p-mismatch', '2A', 'single')
+    resetStore([room], [participant])
+    useWorkspaceStore.getState().assignParticipant('p-mismatch', 'Room 3A', 'Room 3A-bed-0')
+    const error = useWorkspaceStore.getState().assignError
+    expect(error).not.toBeNull()
+    expect(error?.key).toBe('errors.assignmentBlocked')
+    expect(error?.params).toMatchObject({
+      name: 'Guest p-mismatch',
+      requestedRoom: '2A',
+      actualRoom: '3A'
+    })
+  })
+})
+
 describe('resetAllocations', () => {
   it('clears all bed assignments and commits to history', () => {
     const rooms = [makeRoom('Room A', 'Standard', ['single'])]

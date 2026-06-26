@@ -1,0 +1,20 @@
+{
+  "compiler": {
+    "title": "Report Compiler",
+    "subtitle": "Configure the handout then save as PDF via system print.",
+    "printButton": "Trigger System Print / PDF",
+    "printTip": "Tip: In the print dialog, uncheck <1>Headers and footers</1> to hide the browser date, title, and URL from the output.",
+    "handoutLayout": "Handout Layout",
+    "sortByRoom": "📝 Grouped by Rooms",
+    "sortByGuest": "🗂️ Guests List A-Z",
+    "reportHeaderTitle": "Report Header Title",
+    "footerInstructions": "Footer Instructions",
+    "enableFooterInstructions": "Enable footer instructions"
+  },
+  "defaults": {
+    "title": "Summer Retreat 2026 — Official Room Allocations",
+    "footerNotes": "Please check in at the reception desk to pick up your key. Absolute quiet hours are from 10:00 PM to 7:00 AM."
+  },
+  "noticeLabel": "⚠️ Notice for Hosts & Guests:",
+  "unassigned": "N/A"
+}

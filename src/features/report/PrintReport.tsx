@@ -1,15 +1,15 @@
 import { Printer } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import { useWorkspaceStore } from '../../store/useWorkspaceStore'
 
 export default function PrintReport() {
+  const { t } = useTranslation('report')
   const rooms = useWorkspaceStore((s) => s.rooms)
   const participants = useWorkspaceStore((s) => s.participants)
 
-  const [reportTitle, setReportTitle] = useState('Summer Retreat 2026 — Official Room Allocations')
-  const [reportNotes, setReportNotes] = useState(
-    'Please check in at the reception desk to pick up your key. Absolute quiet hours are from 10:00 PM to 7:00 AM.'
-  )
+  const [reportTitle, setReportTitle] = useState(() => t('defaults.title'))
+  const [reportNotes, setReportNotes] = useState(() => t('defaults.footerNotes'))
   const [sortBy, setSortBy] = useState<'room' | 'guest'>('room')
   const [showFooterNotes, setShowFooterNotes] = useState(true)
 
@@ -24,7 +24,7 @@ export default function PrintReport() {
         return {
           id: p.id,
           name: p.name,
-          assignedRoom: p.assignedRoomId || 'Unassigned',
+          assignedRoom: p.assignedRoomId ?? null,
           category: room?.category || ''
         }
       })
@@ -46,11 +46,9 @@ export default function PrintReport() {
         <div>
           <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2">
             <Printer className="w-4 h-4 text-indigo-600" />
-            Report Compiler
+            {t('compiler.title')}
           </h2>
-          <p className="text-[11px] text-slate-400 mt-1 leading-snug">
-            Configure the handout then save as PDF via system print.
-          </p>
+          <p className="text-[11px] text-slate-400 mt-1 leading-snug">{t('compiler.subtitle')}</p>
         </div>
 
         <button
@@ -60,16 +58,17 @@ export default function PrintReport() {
           className="w-full px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg shadow-md transition-colors flex items-center justify-center gap-2 cursor-pointer"
         >
           <Printer className="w-4 h-4" />
-          Trigger System Print / PDF
+          {t('compiler.printButton')}
         </button>
         <p className="text-[10px] text-slate-400 leading-snug">
-          Tip: In the print dialog, uncheck <strong className="text-slate-500">Headers and footers</strong> to hide the
-          browser date, title, and URL from the output.
+          <Trans ns="report" i18nKey="compiler.printTip" components={{ 1: <strong className="text-slate-500" /> }} />
         </p>
 
         <div className="space-y-3 pt-1 border-t border-slate-100">
           <div className="flex flex-col space-y-1.5">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Handout Layout</span>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">
+              {t('compiler.handoutLayout')}
+            </span>
             <div className="grid grid-cols-1 gap-1">
               <button
                 type="button"
@@ -81,7 +80,7 @@ export default function PrintReport() {
                     : 'text-slate-500 hover:bg-slate-50 border border-transparent'
                 }`}
               >
-                📝 Grouped by Rooms
+                {t('compiler.sortByRoom')}
               </button>
               <button
                 type="button"
@@ -93,7 +92,7 @@ export default function PrintReport() {
                     : 'text-slate-500 hover:bg-slate-50 border border-transparent'
                 }`}
               >
-                🗂️ Guests List A-Z
+                {t('compiler.sortByGuest')}
               </button>
             </div>
           </div>
@@ -103,7 +102,7 @@ export default function PrintReport() {
               htmlFor="report-custom-title"
               className="text-[10px] font-bold text-slate-500 uppercase tracking-wide"
             >
-              Report Header Title
+              {t('compiler.reportHeaderTitle')}
             </label>
             <input
               id="report-custom-title"
@@ -120,14 +119,14 @@ export default function PrintReport() {
                 htmlFor="report-custom-notes"
                 className="text-[10px] font-bold text-slate-500 uppercase tracking-wide"
               >
-                Footer Instructions
+                {t('compiler.footerInstructions')}
               </label>
               <input
                 id="footer-notes-toggle"
                 type="checkbox"
                 checked={showFooterNotes}
                 onChange={(e) => setShowFooterNotes(e.target.checked)}
-                aria-label="Enable footer instructions"
+                aria-label={t('compiler.enableFooterInstructions')}
                 className="w-3.5 h-3.5 accent-indigo-600 cursor-pointer"
               />
             </div>
@@ -154,8 +153,8 @@ export default function PrintReport() {
 
           {showFooterNotes && reportNotes && (
             <div className="mb-6 p-3 bg-slate-50 border border-slate-200 rounded text-xs leading-relaxed text-slate-700 italic">
-              <span className="font-bold text-slate-900 not-italic block mb-0.5">⚠️ Notice for Hosts & Guests:</span>"
-              {reportNotes}"
+              <span className="font-bold text-slate-900 not-italic block mb-0.5">{t('noticeLabel')}</span>"{reportNotes}
+              "
             </div>
           )}
 
@@ -182,7 +181,7 @@ export default function PrintReport() {
                     >
                       {Array.from({ length: maxGuestCount }, (_, i) => (
                         <span key={guests[i]?.id ?? `slot-${i}`} className={`block ${!guests[i] ? 'invisible' : ''}`}>
-                          {guests[i]?.name ?? ' '}
+                          {guests[i]?.name ?? ' '}
                         </span>
                       ))}
                     </span>
@@ -202,10 +201,10 @@ export default function PrintReport() {
                   <span className="font-extrabold text-slate-900 text-xs flex-1">{record.name}</span>
                   <span
                     className={`font-mono font-black text-xs px-2 py-0.5 rounded ${
-                      record.assignedRoom === 'Unassigned' ? 'bg-rose-100 text-rose-800' : 'bg-slate-900 text-white'
+                      record.assignedRoom === null ? 'bg-rose-100 text-rose-800' : 'bg-slate-900 text-white'
                     }`}
                   >
-                    {record.assignedRoom === 'Unassigned' ? 'N/A' : record.assignedRoom}
+                    {record.assignedRoom ?? t('unassigned')}
                   </span>
                 </div>
               ))}

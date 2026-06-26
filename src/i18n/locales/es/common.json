@@ -1,0 +1,17 @@
+{
+  "appTitle": "Coordinador de Camas",
+  "appVersion": "v0.1",
+  "appSubtitle": "Asignador de habitaciones, mapeos CSV e informes para imprimir.",
+  "nav": {
+    "roomsAndSignups": "Habitaciones e Inscripciones",
+    "rooming": "Asignación",
+    "pdfReport": "Informe PDF"
+  },
+  "stats": {
+    "assigned": "Asignados",
+    "unassigned": "Sin asignar"
+  },
+  "languageSwitcher": {
+    "ariaLabel": "Seleccionar idioma"
+  }
+}

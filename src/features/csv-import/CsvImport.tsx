@@ -1,21 +1,23 @@
 import { AlertTriangle, CheckCircle, HelpCircle, RefreshCw, Upload } from 'lucide-react'
 import type React from 'react'
 import { useState } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import type { BedType } from '../../shared/bedTypes'
-import type { Participant, Room } from '../../shared/types'
+import type { Participant, Room, TranslatableError } from '../../shared/types'
 import { useWorkspaceStore } from '../../store/useWorkspaceStore'
-import { parseBedConfiguration, parseCSV, parseRoomTypes } from './csvParser'
+import { ParseError, parseBedConfiguration, parseCSV, parseRoomTypes } from './csvParser'
 import { SAMPLE_EXACT_REGISTRATION_CSV, SAMPLE_EXACT_ROOMS_CSV } from './sampleData'
 
 export default function CsvImport() {
+  const { t } = useTranslation('csvImport')
   const rooms = useWorkspaceStore((s) => s.rooms)
   const participants = useWorkspaceStore((s) => s.participants)
   const loadData = useWorkspaceStore((s) => s.loadData)
 
   const [roomsCsv, setRoomsCsv] = useState<string>(SAMPLE_EXACT_ROOMS_CSV)
   const [guestsCsv, setGuestsCsv] = useState<string>(SAMPLE_EXACT_REGISTRATION_CSV)
-  const [errorMsg, setErrorMsg] = useState<string | null>(null)
-  const [successMsg, setSuccessMsg] = useState<string | null>(null)
+  const [errorMsg, setErrorMsg] = useState<TranslatableError | null>(null)
+  const [successMsg, setSuccessMsg] = useState<TranslatableError | null>(null)
 
   const handleProcess = () => {
     try {
@@ -24,7 +26,7 @@ export default function CsvImport() {
 
       const roomRows = parseCSV(roomsCsv)
       if (roomRows.length < 2) {
-        throw new Error('Rooms CSV must have at least a header and one row of data.')
+        throw new ParseError('errors.roomsMinRows')
       }
 
       const roomHeader = roomRows[0].map((h) => h.toLowerCase())
@@ -35,10 +37,10 @@ export default function CsvImport() {
       const idxCategory = roomHeader.findIndex((h) => h.includes('category') || h.includes('type'))
 
       if (idxRoomId === -1) {
-        throw new Error("Rooms CSV requires a column named 'Room' or 'Room ID'.")
+        throw new ParseError('errors.roomsMissingRoomColumn')
       }
       if (idxBedConfig === -1) {
-        throw new Error("Rooms CSV requires a column named 'Bed Configuration' or 'Beds'.")
+        throw new ParseError('errors.roomsMissingBedColumn')
       }
 
       const parsedRooms: Room[] = []
@@ -56,7 +58,7 @@ export default function CsvImport() {
 
       const guestRows = parseCSV(guestsCsv)
       if (guestRows.length < 2) {
-        throw new Error('Participants CSV must have at least a header and one row of data.')
+        throw new ParseError('errors.participantsMinRows')
       }
 
       const guestHeader = guestRows[0].map((h) => h.toLowerCase())
@@ -84,7 +86,7 @@ export default function CsvImport() {
       )
 
       if (idxGuestName === -1) {
-        throw new Error("Participants CSV requires a column named 'Guest Name', 'Attendee Name', or 'Name'.")
+        throw new ParseError('errors.participantsMissingNameColumn')
       }
 
       const parsedParticipants: Participant[] = []
@@ -107,15 +109,17 @@ export default function CsvImport() {
       }
 
       if (parsedRooms.length === 0) {
-        throw new Error('No rooms successfully parsed. Check formatting.')
+        throw new ParseError('errors.noRoomsParsed')
       }
 
       loadData(parsedRooms, parsedParticipants)
-      setSuccessMsg(
-        `Successfully loaded ${parsedRooms.length} Rooms and ${parsedParticipants.length} Participants to the allocation board!`
-      )
+      setSuccessMsg({ key: 'success', params: { rooms: parsedRooms.length, participants: parsedParticipants.length } })
     } catch (err: unknown) {
-      setErrorMsg(err instanceof Error ? err.message : 'An unexpected parsing error occurred.')
+      if (err instanceof ParseError) {
+        setErrorMsg({ key: err.translationKey, params: err.params })
+      } else {
+        setErrorMsg({ key: 'errors.unexpected' })
+      }
     }
   }
 
@@ -144,19 +148,17 @@ export default function CsvImport() {
         <div>
           <h2 id="csv-import-title" className="text-base font-semibold text-slate-800 flex items-center gap-2">
             <Upload className="w-4 h-4 text-indigo-600" />
-            CSV Data Setup Coordinator
+            {t('title')}
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Paste CSV data or upload files, then click Process to load into the workspace.
-          </p>
+          <p className="text-xs text-slate-400 mt-0.5">{t('subtitle')}</p>
         </div>
         <div className="flex items-center gap-3 flex-shrink-0">
           <div className="text-xs text-slate-500 hidden sm:block text-right">
             <span className="bg-slate-100 text-slate-700 font-mono font-semibold px-2 py-0.5 rounded mr-1.5">
-              {rooms.length} Rooms
+              {t('rooms.count', { count: rooms.length })}
             </span>
             <span className="bg-slate-100 text-slate-700 font-mono font-semibold px-2 py-0.5 rounded">
-              {participants.length} Registrants
+              {t('registrants.count', { count: participants.length })}
             </span>
           </div>
           <button
@@ -166,7 +168,7 @@ export default function CsvImport() {
             className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
           >
             <RefreshCw className="w-3.5 h-3.5" />
-            Process and Load Lists
+            {t('processButton')}
           </button>
         </div>
       </div>
@@ -174,42 +176,47 @@ export default function CsvImport() {
       {errorMsg && (
         <div className="mb-3 p-3 bg-rose-50 border border-rose-200 rounded-lg text-rose-700 text-xs flex items-start gap-2 animate-fadeIn flex-shrink-0">
           <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-          <span>{errorMsg}</span>
+          <span>{t(errorMsg.key, errorMsg.params)}</span>
         </div>
       )}
 
       {successMsg && (
         <div className="mb-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-xs flex items-start gap-2 animate-fadeIn flex-shrink-0">
           <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-emerald-600" />
-          <span>{successMsg}</span>
+          <span>{t(successMsg.key, successMsg.params)}</span>
         </div>
       )}
 
       <div className="mb-4 p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 flex-shrink-0">
         <h4 className="font-semibold text-slate-700 flex items-center gap-1 mb-2">
           <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
-          CSV Column Format & Mapping Guidelines
+          {t('columnGuide.title')}
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 leading-relaxed">
           <div>
-            <span className="font-semibold text-slate-700">Room Bed Configuration Rules:</span>
+            <span className="font-semibold text-slate-700">{t('columnGuide.bedRulesTitle')}</span>
             <ul className="list-disc pl-4 mt-1 space-y-0.5">
               <li>
-                <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">single</code> (Single/Bunk, cap=1)
+                <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">single</code>{' '}
+                {t('columnGuide.singleDesc')}
               </li>
               <li>
-                <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">double_single</code> (solo use, cap=1)
+                <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">double_single</code>{' '}
+                {t('columnGuide.doubleSingleDesc')}
               </li>
               <li>
-                <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">double_shared</code> (2 slots)
+                <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">double_shared</code>{' '}
+                {t('columnGuide.doubleSharedDesc')}
               </li>
             </ul>
           </div>
           <div>
-            <span className="font-semibold text-slate-700">Registrant Columns:</span> Need{' '}
-            <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">Name</code>. Preferred bed maps to a bed
-            configuration; preferred room matches the Room Type (e.g.,{' '}
-            <code className="bg-slate-200 px-1 rounded font-mono text-[10px]">Standard</code>).
+            <span className="font-semibold text-slate-700">{t('columnGuide.registrantColumnsTitle')}</span>{' '}
+            <Trans
+              i18nKey="columnGuide.registrantColumnsDetail"
+              ns="csvImport"
+              components={{ code: <code className="bg-slate-200 px-1 rounded font-mono text-[10px]" /> }}
+            />
           </div>
         </div>
       </div>
@@ -224,11 +231,11 @@ export default function CsvImport() {
               <span className="bg-amber-100 text-amber-800 text-xs w-5 h-5 flex items-center justify-center rounded-full font-mono">
                 1
               </span>
-              Rooms List (CSV format)
+              {t('rooms.label')}
             </label>
             <label className="cursor-pointer text-xs font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
               <Upload className="w-3.5 h-3.5" />
-              Upload .csv file
+              {t('rooms.uploadFile')}
               <input type="file" accept=".csv" onChange={(e) => handleFileUpload(e, 'rooms')} className="hidden" />
             </label>
           </div>
@@ -255,11 +262,11 @@ export default function CsvImport() {
               <span className="bg-teal-100 text-teal-800 text-xs w-5 h-5 flex items-center justify-center rounded-full font-mono">
                 2
               </span>
-              Registrants & Signups (CSV format)
+              {t('registrants.label')}
             </label>
             <label className="cursor-pointer text-xs font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
               <Upload className="w-3.5 h-3.5" />
-              Upload .csv file
+              {t('registrants.uploadFile')}
               <input
                 type="file"
                 accept=".csv"

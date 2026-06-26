@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import i18n from 'i18next'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Participant, Room } from '../../shared/types'
 import { useWorkspaceStore } from '../../store/useWorkspaceStore'
 import RoomCard from './RoomCard'
@@ -7,6 +8,28 @@ import RoomCard from './RoomCard'
 vi.mock('../../store/useWorkspaceStore', () => ({
   useWorkspaceStore: vi.fn()
 }))
+
+beforeEach(() => {
+  i18n.addResourceBundle(
+    'en',
+    'allocation',
+    {
+      roomCard: {
+        bedsOccupied: '{{occupied}} / {{total}} Beds Occupied',
+        full: 'FULL',
+        emptySlot: 'Empty Slot',
+        dropHere: 'Drop Here',
+        unassignTitle: 'Unassign occupant',
+        mismatchTitle: 'Allocation Mismatch:',
+        mismatchRoom: 'Requested Room: {{types}}',
+        mismatchBed: 'Requested Bed: {{type}}'
+      }
+    },
+    true,
+    true
+  )
+  i18n.changeLanguage('en')
+})
 
 const room: Room = {
   id: 'Room 101',

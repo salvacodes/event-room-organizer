@@ -1,0 +1,17 @@
+{
+  "appTitle": "Event Bed Coordinator",
+  "appVersion": "v0.1",
+  "appSubtitle": "Room assigner, CSV mappings & print sheets.",
+  "nav": {
+    "roomsAndSignups": "Rooms & Signups",
+    "rooming": "Rooming",
+    "pdfReport": "PDF Report"
+  },
+  "stats": {
+    "assigned": "Assigned",
+    "unassigned": "Unassigned"
+  },
+  "languageSwitcher": {
+    "ariaLabel": "Select language"
+  }
+}

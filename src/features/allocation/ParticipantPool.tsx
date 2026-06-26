@@ -1,6 +1,7 @@
 import { useDraggable } from '@dnd-kit/core'
 import { Search, UserPlus, Users } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { Participant, Room } from '../../shared/types'
 import { useWorkspaceStore } from '../../store/useWorkspaceStore'
 
@@ -25,6 +26,7 @@ function DraggableParticipantCard({
   rooms: Room[]
   assignParticipant: (participantId: string, roomId: string, bedId: string) => void
 }) {
+  const { t } = useTranslation('allocation')
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: participant.id,
     data: { participant }
@@ -64,7 +66,7 @@ function DraggableParticipantCard({
 
       {participant.sharingPreferences && (
         <div className="p-2 rounded bg-slate-50 text-[10px] text-slate-600 leading-normal border-l-2 border-indigo-200">
-          <span className="font-bold text-indigo-700 block mb-0.5">Preference & Share details:</span>"
+          <span className="font-bold text-indigo-700 block mb-0.5">{t('pool.sharingDetails')}</span>"
           {participant.sharingPreferences}"
         </div>
       )}
@@ -78,7 +80,7 @@ function DraggableParticipantCard({
             className="text-[10px] bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-2 py-1 rounded flex items-center gap-1 transition-all cursor-pointer"
           >
             <UserPlus className="w-3 h-3" />
-            Quick Allocate Bed...
+            {t('pool.quickAllocate')}
           </button>
 
           {isQuickAssignOpen && (
@@ -87,13 +89,13 @@ function DraggableParticipantCard({
               className="absolute left-0 right-0 mt-2 p-2.5 bg-white rounded-xl shadow-lg border border-slate-200 z-50 text-xs space-y-2 animate-fadeIn max-h-56 overflow-y-auto"
             >
               <div className="flex items-center justify-between border-b pb-1.5">
-                <span className="font-bold text-slate-700">Select Available Bed:</span>
+                <span className="font-bold text-slate-700">{t('pool.selectAvailableBed')}</span>
                 <button
                   type="button"
                   onClick={onToggleQuickAssign}
                   className="text-[10px] text-slate-400 hover:text-slate-600"
                 >
-                  Close
+                  {t('pool.close')}
                 </button>
               </div>
               {(() => {
@@ -110,11 +112,11 @@ function DraggableParticipantCard({
                 if (matchingBeds.length === 0) {
                   return (
                     <div className="p-3 text-center bg-amber-50 rounded-lg border border-amber-200 text-[11px] text-amber-800 font-bold leading-normal">
-                      ⚠️ No vacant slots available matching:
+                      ⚠️ {t('pool.noVacantSlots')}
                       <div className="mt-1 text-slate-600 font-medium">
-                        🏨 Category {participant.requestedRoomType.join(' / ')}
+                        {t('pool.noVacantCategory', { types: participant.requestedRoomType.join(' / ') })}
                         <br />
-                        🛏️ Configuration {participant.requestedBedType}
+                        {t('pool.noVacantBed', { bedType: participant.requestedBedType })}
                       </div>
                     </div>
                   )
@@ -150,6 +152,7 @@ function DraggableParticipantCard({
 }
 
 export default function ParticipantPool() {
+  const { t } = useTranslation('allocation')
   const participants = useWorkspaceStore((s) => s.participants)
   const rooms = useWorkspaceStore((s) => s.rooms)
   const assignParticipant = useWorkspaceStore((s) => s.assignParticipant)
@@ -203,7 +206,7 @@ export default function ParticipantPool() {
         <div>
           <h3 id="participant-pool-title" className="text-base font-semibold text-slate-800 flex items-center gap-2">
             <Users className="w-5 h-5 text-indigo-500" />
-            Guests Registry Pool
+            {t('pool.title')}
           </h3>
         </div>
       </div>
@@ -216,7 +219,7 @@ export default function ParticipantPool() {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search by name, room choice, shared notes..."
+            placeholder={t('pool.searchPlaceholder')}
             className="w-full text-xs pl-9 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-indigo-500 placeholder:text-slate-400"
           />
         </div>
@@ -226,7 +229,7 @@ export default function ParticipantPool() {
             htmlFor="room-type-filter-select"
             className="text-[10px] font-bold text-slate-450 uppercase tracking-wider"
           >
-            Room Type
+            {t('pool.roomTypeLabel')}
           </label>
           <select
             id="room-type-filter-select"
@@ -237,7 +240,7 @@ export default function ParticipantPool() {
             }}
             className="text-xs py-1.5 px-2 border border-slate-200 rounded-md bg-slate-55 text-slate-600 focus:outline-hidden focus:ring-1 focus:ring-indigo-500 font-medium cursor-pointer"
           >
-            <option value="all">All room types</option>
+            <option value="all">{t('pool.allRoomTypes')}</option>
             {roomPrefOptions.map((pref) => (
               <option key={pref} value={pref}>
                 {pref}
@@ -253,11 +256,9 @@ export default function ParticipantPool() {
             <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-mono mb-3">
               ?
             </div>
-            <p className="text-xs font-semibold text-slate-600">No matching guests found</p>
+            <p className="text-xs font-semibold text-slate-600">{t('pool.emptyTitle')}</p>
             <p className="text-[11px] text-slate-400 mt-1 max-w-[200px]">
-              {searchTerm || roomTypeFilter !== 'all'
-                ? 'Try clearing filters or search queries above.'
-                : 'All guests have already been assigned to rooms!'}
+              {searchTerm || roomTypeFilter !== 'all' ? t('pool.emptyFilteredHint') : t('pool.emptyAllAssignedHint')}
             </p>
           </div>
         ) : (
@@ -279,8 +280,7 @@ export default function ParticipantPool() {
       </div>
 
       <p className="text-[10px] text-slate-400 mt-4 leading-normal bg-slate-50 p-2.5 rounded-lg border border-slate-150">
-        💡 <span className="font-semibold text-slate-600">Tip:</span> Pick up any guest card and drag them directly into
-        the designated bed circles in the room cards.
+        💡 <span className="font-semibold text-slate-600">Tip:</span> {t('pool.tip')}
       </p>
     </div>
   )

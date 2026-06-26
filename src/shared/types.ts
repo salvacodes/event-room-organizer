@@ -30,3 +30,8 @@ export interface HistoryState {
   rooms: Room[]
   participants: Participant[]
 }
+
+export interface TranslatableError {
+  key: string
+  params?: Record<string, string | number>
+}

@@ -1,10 +1,13 @@
 import { DoorOpen, FileText, Printer } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import AllocationBoard from './features/allocation/AllocationBoard'
 import CsvImport from './features/csv-import/CsvImport'
 import PrintReport from './features/report/PrintReport'
+import LanguageSwitcher from './shared/components/LanguageSwitcher'
 import { useWorkspaceStore } from './store/useWorkspaceStore'
 
 export default function App() {
+  const { t } = useTranslation('common')
   const activeTab = useWorkspaceStore((s) => s.activeTab)
   const setActiveTab = useWorkspaceStore((s) => s.setActiveTab)
   const rooms = useWorkspaceStore((s) => s.rooms)
@@ -30,13 +33,13 @@ export default function App() {
             </div>
             <div>
               <h1 id="app-branded-title" className="text-sm font-extrabold tracking-tight flex items-center gap-2">
-                Event Bed Coordinator
+                {t('appTitle')}
                 <span className="bg-slate-800 text-[10px] text-slate-400 border border-slate-700 px-1.5 py-0.5 rounded-full font-mono">
-                  v0.1
+                  {t('appVersion')}
                 </span>
               </h1>
               <p className="text-[10px] text-slate-400 mt-0.5 font-medium leading-none hidden md:block">
-                Room assigner, CSV mappings & print sheets.
+                {t('appSubtitle')}
               </p>
             </div>
           </div>
@@ -53,7 +56,7 @@ export default function App() {
               }`}
             >
               <FileText className="w-3.5 h-3.5" />
-              Rooms & Signups
+              {t('nav.roomsAndSignups')}
             </button>
 
             <button
@@ -67,7 +70,7 @@ export default function App() {
               }`}
             >
               <DoorOpen className="w-3.5 h-3.5" />
-              Rooming
+              {t('nav.rooming')}
             </button>
 
             <button
@@ -81,24 +84,29 @@ export default function App() {
               }`}
             >
               <Printer className="w-3.5 h-3.5" />
-              PDF Report
+              {t('nav.pdfReport')}
             </button>
           </nav>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end items-center gap-3">
             <div className="items-center gap-3 bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg hidden sm:flex">
               <div className="text-center font-mono">
-                <span className="block text-[9px] text-slate-400 font-bold uppercase tracking-wider">Assigned</span>
+                <span className="block text-[9px] text-slate-400 font-bold uppercase tracking-wider">
+                  {t('stats.assigned')}
+                </span>
                 <span className="text-xs text-white font-extrabold">
                   {assignedCount} / {totalBedsCount}
                 </span>
               </div>
               <div className="h-6 w-px bg-slate-700" />
               <div className="text-center font-mono">
-                <span className="block text-[9px] text-slate-400 font-bold uppercase tracking-wider">Unassigned</span>
+                <span className="block text-[9px] text-slate-400 font-bold uppercase tracking-wider">
+                  {t('stats.unassigned')}
+                </span>
                 <span className="text-xs text-amber-400 font-extrabold">{unassignedCount}</span>
               </div>
             </div>
+            <LanguageSwitcher />
           </div>
         </div>
       </header>

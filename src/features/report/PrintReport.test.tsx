@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import i18n from 'i18next'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Participant, Room } from '../../shared/types'
 import { useWorkspaceStore } from '../../store/useWorkspaceStore'
 import PrintReport from './PrintReport'
@@ -32,6 +33,38 @@ function setupMock(rooms: Room[] = [], participants: Participant[] = []) {
   // biome-ignore lint/suspicious/noExplicitAny: test mock selector
   vi.mocked(useWorkspaceStore).mockImplementation((selector: (s: any) => unknown) => selector({ rooms, participants }))
 }
+
+beforeEach(() => {
+  i18n.addResourceBundle(
+    'en',
+    'report',
+    {
+      compiler: {
+        title: 'Report Compiler',
+        subtitle: 'Configure the handout then save as PDF via system print.',
+        printButton: 'Trigger System Print / PDF',
+        printTip:
+          'Tip: In the print dialog, uncheck <1>Headers and footers</1> to hide the browser date, title, and URL from the output.',
+        handoutLayout: 'Handout Layout',
+        sortByRoom: '📝 Grouped by Rooms',
+        sortByGuest: '🗂️ Guests List A-Z',
+        reportHeaderTitle: 'Report Header Title',
+        footerInstructions: 'Footer Instructions',
+        enableFooterInstructions: 'Enable footer instructions'
+      },
+      defaults: {
+        title: 'Summer Retreat 2026 — Official Room Allocations',
+        footerNotes:
+          'Please check in at the reception desk to pick up your key. Absolute quiet hours are from 10:00 PM to 7:00 AM.'
+      },
+      noticeLabel: '⚠️ Notice for Hosts & Guests:',
+      unassigned: 'N/A'
+    },
+    true,
+    true
+  )
+  i18n.changeLanguage('en')
+})
 
 describe('PrintReport — sidebar controls', () => {
   it('does not render the filter preview input', () => {
@@ -214,5 +247,25 @@ describe('PrintReport — guest list view (compact)', () => {
 
     expect(screen.queryByText(/Sharing Preferences/i)).not.toBeInTheDocument()
     expect(screen.queryByText('No strong preferences')).not.toBeInTheDocument()
+  })
+})
+
+describe('PrintReport — locale switching', () => {
+  it('renders Spanish compiler title when locale is es', async () => {
+    i18n.addResourceBundle('es', 'report', { compiler: { title: 'Compilador de Informes' } }, true, true)
+    await i18n.changeLanguage('es')
+    setupMock()
+    render(<PrintReport />)
+    expect(screen.getByText('Compilador de Informes')).toBeInTheDocument()
+    await i18n.changeLanguage('en')
+  })
+
+  it('renders Spanish grouped-by-rooms option when locale is es', async () => {
+    i18n.addResourceBundle('es', 'report', { compiler: { sortByRoom: '📝 Agrupado por Habitaciones' } }, true, true)
+    await i18n.changeLanguage('es')
+    setupMock()
+    render(<PrintReport />)
+    expect(screen.getByText('📝 Agrupado por Habitaciones')).toBeInTheDocument()
+    await i18n.changeLanguage('en')
   })
 })

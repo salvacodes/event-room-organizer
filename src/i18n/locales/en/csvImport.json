@@ -1,0 +1,35 @@
+{
+  "title": "CSV Data Setup Coordinator",
+  "subtitle": "Paste CSV data or upload files, then click Process to load into the workspace.",
+  "rooms": {
+    "label": "Rooms List (CSV format)",
+    "uploadFile": "Upload .csv file",
+    "count": "{{count}} Rooms"
+  },
+  "registrants": {
+    "label": "Registrants & Signups (CSV format)",
+    "uploadFile": "Upload .csv file",
+    "count": "{{count}} Registrants"
+  },
+  "processButton": "Process and Load Lists",
+  "columnGuide": {
+    "title": "CSV Column Format & Mapping Guidelines",
+    "bedRulesTitle": "Room Bed Configuration Rules:",
+    "singleDesc": "(Single/Bunk, cap=1)",
+    "doubleSingleDesc": "(solo use, cap=1)",
+    "doubleSharedDesc": "(2 slots)",
+    "registrantColumnsTitle": "Registrant Columns:",
+    "registrantColumnsDetail": "Need <code>Name</code>. Preferred bed maps to a bed configuration; preferred room matches the Room Type (e.g., <code>Standard</code>)."
+  },
+  "success": "Successfully loaded {{rooms}} Rooms and {{participants}} Participants to the allocation board!",
+  "errors": {
+    "roomsMinRows": "Rooms CSV must have at least a header and one row of data.",
+    "roomsMissingRoomColumn": "Rooms CSV requires a column named 'Room' or 'Room ID'.",
+    "roomsMissingBedColumn": "Rooms CSV requires a column named 'Bed Configuration' or 'Beds'.",
+    "participantsMinRows": "Participants CSV must have at least a header and one row of data.",
+    "participantsMissingNameColumn": "Participants CSV requires a column named 'Guest Name', 'Attendee Name', or 'Name'.",
+    "noRoomsParsed": "No rooms successfully parsed. Check formatting.",
+    "unknownBedType": "Unknown bed type: \"{{type}}\"",
+    "unexpected": "An unexpected parsing error occurred."
+  }
+}

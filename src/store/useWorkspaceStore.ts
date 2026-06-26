@@ -3,7 +3,7 @@ import { parseBedConfiguration, parseCSV, parseRoomTypes } from '../features/csv
 import { SAMPLE_EXACT_REGISTRATION_CSV, SAMPLE_EXACT_ROOMS_CSV } from '../features/csv-import/sampleData'
 import type { BedType } from '../shared/bedTypes'
 import { getBedTypeLabel } from '../shared/bedTypes'
-import type { HistoryState, Participant, Room } from '../shared/types'
+import type { HistoryState, Participant, Room, TranslatableError } from '../shared/types'
 
 type ActiveTab = 'board' | 'csv' | 'report'
 
@@ -13,7 +13,7 @@ interface WorkspaceStore {
   history: HistoryState[]
   historyIndex: number
   draggedParticipant: Participant | null
-  assignError: string | null
+  assignError: TranslatableError | null
   autoAllocateResult: { matchesCount: number } | null
   activeTab: ActiveTab
   roomTypeFilter: string
@@ -107,7 +107,16 @@ export const useWorkspaceStore = create<WorkspaceStore>()((set, get) => {
       const roomTypeMatch = participant.requestedRoomType.some((rt) => normStr(rt) === normStr(room.category))
       if (!roomTypeMatch || participant.requestedBedType !== bed.type) {
         set({
-          assignError: `Assignment Blocked: "${participant.name}" requested Room Category [${participant.requestedRoomType.join(' / ')}] and Bed Config [${getBedTypeLabel(participant.requestedBedType)}]. You attempted to place them in a Room of Category [${room.category}] and Bed Config [${bed.label || getBedTypeLabel(bed.type)}].`
+          assignError: {
+            key: 'errors.assignmentBlocked',
+            params: {
+              name: participant.name,
+              requestedRoom: participant.requestedRoomType.join(' / '),
+              requestedBed: getBedTypeLabel(participant.requestedBedType),
+              actualRoom: room.category,
+              actualBed: bed.label ?? getBedTypeLabel(bed.type)
+            }
+          }
         })
         return
       }

@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
-import type { Bed } from '../../shared/types'
+import i18n from 'i18next'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type { Bed, TranslatableError } from '../../shared/types'
 import { useWorkspaceStore } from '../../store/useWorkspaceStore'
 import AllocationBoard from './AllocationBoard'
 
@@ -8,11 +9,57 @@ vi.mock('../../store/useWorkspaceStore', () => ({
   useWorkspaceStore: vi.fn()
 }))
 
+beforeEach(() => {
+  i18n.addResourceBundle(
+    'en',
+    'allocation',
+    {
+      board: {
+        title: 'Drag & Drop to Allocate',
+        subtitle:
+          'Drag guests from the sidebar pool and drop them onto unoccupied bed slots below. Only beds that match their exact requested room type and bed configuration are permitted.',
+        undoTitle: 'Undo mapping step',
+        redoTitle: 'Redo mapping step',
+        autoAllocate: 'Auto-Allocate',
+        autoAllocateTitle: 'Run matching model to auto-assign vacant beds',
+        reset: 'Reset',
+        resetTitle: 'Remove all allocations',
+        dismiss: 'Dismiss',
+        errorTitle: 'Permissible Target Limit Restriction',
+        errorHint:
+          'Hint: Check their preferred tags on their guest card. Each guest must be allocated according to their specific room and bed type selections!',
+        emptyTitle: 'No rooms configuration loaded',
+        emptySubtitle:
+          'To start distributing attendees on beds, set up your Event Rooms spreadsheet list inside the "Rooms & Signups" tab.'
+      },
+      resetModal: {
+        title: 'Reset Board?',
+        message:
+          'All current bed assignments will be cleared. Participant details will remain, but everyone will return to the unassigned list.',
+        confirm: 'Reset'
+      },
+      toast: {
+        successMessage: 'Auto-allocation complete! {{count}} guests have been assigned.',
+        noMatchesMessage: 'No matches found. No vacant beds match any unassigned guest preferences.'
+      },
+      pool: { title: 'Guests Registry Pool', allRoomTypes: 'All room types', tip: '' },
+      roomCard: { emptySlot: 'Empty Slot', dropHere: 'Drop Here', full: 'FULL' },
+      errors: {
+        assignmentBlocked:
+          'Assignment Blocked: "{{name}}" requested Room Category [{{requestedRoom}}] and Bed Config [{{requestedBed}}]. You attempted to place them in a Room of Category [{{actualRoom}}] and Bed Config [{{actualBed}}].'
+      }
+    },
+    true,
+    true
+  )
+  i18n.changeLanguage('en')
+})
+
 type MockState = {
   rooms: { id: string; category: string; beds: Bed[]; capacity: number }[]
   participants: []
   draggedParticipant: null
-  assignError: string | null
+  assignError: TranslatableError | null
   autoAllocate: () => void
   resetAllocations: () => void
   clearAssignError: () => void
@@ -148,6 +195,40 @@ describe('AllocationBoard — room type filter', () => {
     render(<AllocationBoard />)
     expect(screen.getByText('Room 101')).toBeInTheDocument()
     expect(screen.queryByText('Room 201')).not.toBeInTheDocument()
+  })
+})
+
+describe('AllocationBoard — locale switching', () => {
+  it('renders Spanish board title when locale is es', async () => {
+    i18n.addResourceBundle(
+      'es',
+      'allocation',
+      {
+        board: { title: 'Arrastra y Suelta para Asignar' },
+        pool: { title: 'Pool de Registro de Huéspedes' },
+        toast: {
+          successMessage: '¡Asignación automática completada! Se asignaron {{count}} huéspedes.',
+          noMatchesMessage: 'No se encontraron coincidencias.'
+        },
+        resetModal: { title: '¿Reiniciar tablero?', message: 'Se borrarán asignaciones.', confirm: 'Reiniciar' },
+        errors: { assignmentBlocked: 'Asignación bloqueada: {{name}}' }
+      },
+      true,
+      true
+    )
+    await i18n.changeLanguage('es')
+    setupMock()
+    render(<AllocationBoard />)
+    expect(screen.getByText('Arrastra y Suelta para Asignar')).toBeInTheDocument()
+    await i18n.changeLanguage('en')
+  })
+
+  it('renders Spanish pool title when locale is es', async () => {
+    await i18n.changeLanguage('es')
+    setupMock()
+    render(<AllocationBoard />)
+    expect(screen.getByText('Pool de Registro de Huéspedes')).toBeInTheDocument()
+    await i18n.changeLanguage('en')
   })
 })
 

@@ -1,0 +1,20 @@
+{
+  "compiler": {
+    "title": "Compilador de Informes",
+    "subtitle": "Configura el documento y guárdalo como PDF mediante la impresión del sistema.",
+    "printButton": "Activar Impresión del Sistema / PDF",
+    "printTip": "Consejo: En el cuadro de diálogo de impresión, desmarca <1>Encabezados y pies de página</1> para ocultar la fecha del navegador, el título y la URL del resultado.",
+    "handoutLayout": "Diseño del documento",
+    "sortByRoom": "📝 Agrupado por Habitaciones",
+    "sortByGuest": "🗂️ Lista de Huéspedes A-Z",
+    "reportHeaderTitle": "Título del informe",
+    "footerInstructions": "Instrucciones del pie de página",
+    "enableFooterInstructions": "Activar instrucciones del pie de página"
+  },
+  "defaults": {
+    "title": "Retiro de Verano 2026 — Asignaciones Oficiales de Habitaciones",
+    "footerNotes": "Por favor, preséntate en la recepción para recoger tu llave. Las horas de silencio absoluto son de 22:00 a 7:00."
+  },
+  "noticeLabel": "⚠️ Aviso para Anfitriones y Huéspedes:",
+  "unassigned": "N/D"
+}
