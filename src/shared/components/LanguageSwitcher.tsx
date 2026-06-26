@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next'
 import i18n from '../../i18n/index'
 
 const LOCALES = [
-  { code: 'es', flag: '🇪🇸', name: 'Español' },
-  { code: 'en', flag: '🇬🇧', name: 'English' }
+  { code: 'es', flagCode: 'es', name: 'Español' },
+  { code: 'en', flagCode: 'gb', name: 'English' }
 ]
 
 export default function LanguageSwitcher() {
@@ -25,7 +25,7 @@ export default function LanguageSwitcher() {
         onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
       >
-        <span>{current.flag}</span>
+        <span role="img" aria-label={`${current.name} flag`} className={`fi fi-${current.flagCode}`} />
         <span>{current.name}</span>
       </button>
       {open && (
@@ -38,7 +38,7 @@ export default function LanguageSwitcher() {
               onClick={() => handleSelect(locale.code)}
               className="flex w-full items-center gap-2 px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
             >
-              <span>{locale.flag}</span>
+              <span role="img" aria-label={`${locale.name} flag`} className={`fi fi-${locale.flagCode}`} />
               <span>{locale.name}</span>
               {locale.code === current.code && <span className="ml-auto text-indigo-400">✓</span>}
             </button>

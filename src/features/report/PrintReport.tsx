@@ -181,7 +181,7 @@ export default function PrintReport() {
                     >
                       {Array.from({ length: maxGuestCount }, (_, i) => (
                         <span key={guests[i]?.id ?? `slot-${i}`} className={`block ${!guests[i] ? 'invisible' : ''}`}>
-                          {guests[i]?.name ?? ' '}
+                          {guests[i]?.name ?? ' '}
                         </span>
                       ))}
                     </span>

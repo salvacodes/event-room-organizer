@@ -22,7 +22,12 @@ beforeEach(() => {
         unassignTitle: 'Unassign occupant',
         mismatchTitle: 'Allocation Mismatch:',
         mismatchRoom: 'Requested Room: {{types}}',
-        mismatchBed: 'Requested Bed: {{type}}'
+        mismatchBed: 'Requested Bed: {{type}}',
+        bedTypeLabel: {
+          single: 'Single Bed',
+          double_single: 'Double Bed (Own)',
+          double_shared: 'Double Bed (Shared)'
+        }
       }
     },
     true,
@@ -62,9 +67,33 @@ describe('RoomCard — rendering', () => {
     expect(screen.getByText('Room 101')).toBeInTheDocument()
     expect(screen.getByText('Standard')).toBeInTheDocument()
     expect(screen.getByText('0 / 2 Beds Occupied')).toBeInTheDocument()
-    expect(screen.getByText('Single Bed 1')).toBeInTheDocument()
-    expect(screen.getByText('Single Bed 2')).toBeInTheDocument()
+    expect(screen.getAllByText('Single Bed')).toHaveLength(2)
     expect(screen.getAllByText('Empty Slot')).toHaveLength(2)
     expect(screen.getAllByText('Drop Here')).toHaveLength(2)
+  })
+})
+
+describe('RoomCard — bed type translation', () => {
+  it('shows translated bed type label when locale changes to Spanish', async () => {
+    i18n.addResourceBundle(
+      'es',
+      'allocation',
+      {
+        roomCard: {
+          bedTypeLabel: {
+            single: 'Cama Individual',
+            double_single: 'Doble (Propia)',
+            double_shared: 'Doble (Compartida)'
+          }
+        }
+      },
+      true,
+      true
+    )
+    await i18n.changeLanguage('es')
+    setupMock()
+    render(<RoomCard room={room} />)
+    expect(screen.getAllByText('Cama Individual')).toHaveLength(2)
+    await i18n.changeLanguage('en')
   })
 })

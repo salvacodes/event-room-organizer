@@ -48,7 +48,12 @@
     "unassignTitle": "Unassign occupant",
     "mismatchTitle": "Allocation Mismatch:",
     "mismatchRoom": "Requested Room: {{types}}",
-    "mismatchBed": "Requested Bed: {{type}}"
+    "mismatchBed": "Requested Bed: {{type}}",
+    "bedTypeLabel": {
+      "single": "Single Bed",
+      "double_single": "Double Bed (Own)",
+      "double_shared": "Double Bed (Shared)"
+    }
   },
   "errors": {
     "assignmentBlocked": "Assignment Blocked: \"{{name}}\" requested Room Category [{{requestedRoom}}] and Bed Config [{{requestedBed}}]. You attempted to place them in a Room of Category [{{actualRoom}}] and Bed Config [{{actualBed}}]."

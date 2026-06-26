@@ -83,7 +83,8 @@ function BedSlot({
 
         <div className="flex flex-col min-w-0">
           <span className="text-[10px] font-bold text-slate-450 uppercase tracking-wide leading-none">
-            {bed.label || bed.type}
+            {t(`roomCard.bedTypeLabel.${bed.type}`)}
+            {bed.id.endsWith('-spot1') ? ' A' : bed.id.endsWith('-spot2') ? ' B' : ''}
           </span>
           {occupant ? (
             <div className="flex items-center gap-1.5 mt-0.5 pr-2">

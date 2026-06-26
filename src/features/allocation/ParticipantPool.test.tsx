@@ -140,3 +140,29 @@ describe('ParticipantPool — unassigned-only visibility', () => {
     expect(screen.getByText('No matching guests found')).toBeInTheDocument()
   })
 })
+
+describe('ParticipantPool — bed type translation', () => {
+  it('shows translated bed type label on guest card when locale changes to Spanish', async () => {
+    const participant = {
+      id: 'p-single',
+      name: 'Guest A',
+      requestedRoomType: ['Standard'],
+      requestedBedType: 'single' as const,
+      sharingPreferences: '',
+      assignedRoomId: null,
+      assignedBedId: null
+    }
+    i18n.addResourceBundle(
+      'es',
+      'allocation',
+      { roomCard: { bedTypeLabel: { single: 'Cama Individual' } } },
+      true,
+      true
+    )
+    await i18n.changeLanguage('es')
+    setupMock([participant])
+    render(<ParticipantPool />)
+    expect(screen.getByText(/Cama Individual/)).toBeInTheDocument()
+    await i18n.changeLanguage('en')
+  })
+})

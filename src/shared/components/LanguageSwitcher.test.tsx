@@ -18,14 +18,14 @@ describe('LanguageSwitcher', () => {
   it('renders the current locale flag and name', () => {
     render(<LanguageSwitcher />)
     expect(screen.getByText(/English/)).toBeInTheDocument()
-    expect(screen.getByText(/🇬🇧/)).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /English flag/i })).toBeInTheDocument()
   })
 
   it('opens a dropdown with all locale options on click', async () => {
     render(<LanguageSwitcher />)
     await userEvent.click(screen.getByRole('button', { name: /Select language/i }))
     expect(screen.getByText(/Español/)).toBeInTheDocument()
-    expect(screen.getByText(/🇪🇸/)).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /Español flag/i })).toBeInTheDocument()
   })
 
   it('calls i18n.changeLanguage when a different locale is selected', async () => {
@@ -41,7 +41,7 @@ describe('LanguageSwitcher', () => {
     render(<LanguageSwitcher />)
     await userEvent.click(screen.getByRole('button', { name: /Select language/i }))
     await userEvent.click(screen.getByText(/Español/))
-    expect(screen.queryByText(/🇪🇸/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Español/)).not.toBeInTheDocument()
   })
 
   it('shows a checkmark indicator on the currently active locale in the dropdown', async () => {

@@ -48,7 +48,12 @@
     "unassignTitle": "Desasignar ocupante",
     "mismatchTitle": "Desajuste de Asignación:",
     "mismatchRoom": "Habitación Solicitada: {{types}}",
-    "mismatchBed": "Cama Solicitada: {{type}}"
+    "mismatchBed": "Cama Solicitada: {{type}}",
+    "bedTypeLabel": {
+      "single": "Cama Individual",
+      "double_single": "Doble (Propia)",
+      "double_shared": "Doble (Compartida)"
+    }
   },
   "errors": {
     "assignmentBlocked": "Asignación bloqueada: \"{{name}}\" solicitó Categoría [{{requestedRoom}}] y Config. de Cama [{{requestedBed}}]. Intentaste colocarlo en Categoría [{{actualRoom}}] y Config. de Cama [{{actualBed}}]."

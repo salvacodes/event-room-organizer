@@ -59,7 +59,7 @@ function DraggableParticipantCard({
         )}
         {participant.requestedBedType && (
           <span className="bg-teal-50/70 text-teal-800 border border-teal-200/50 text-[10px] font-semibold px-2 py-0.5 rounded-full">
-            🛏️ {participant.requestedBedType}
+            🛏️ {t(`roomCard.bedTypeLabel.${participant.requestedBedType}`)}
           </span>
         )}
       </div>
